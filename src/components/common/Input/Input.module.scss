@@ -1,0 +1,161 @@
+@import '../../../assets/styles/variables';
+@import '../../../assets/styles/mixins';
+
+.inputContainer {
+    margin-bottom: $spacing-3;
+    width: 100%;
+    
+    @media (min-width: $breakpoint-md) {
+        margin-bottom: $spacing-4;
+    }
+
+    .inputWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-1;
+
+        .label {
+            font-size: $font-xxs;
+            letter-spacing: 1px;
+            color: $background-color;
+            font-weight: 300;
+            @include respond-to($breakpoint-md) {
+                font-size: $font-base; 
+            }
+            @include respond-to-mobile-landscape() {
+                font-size: $font-xs;
+            }
+            
+            &.label--dark { 
+                color: $text-color !important;
+                font-weight: bold;
+            }
+            span{
+                color: $error-color;
+            }
+        }
+
+        .inputFieldWrapper, .inputFieldWrapperDark{
+            position: relative;
+            display: flex;
+            align-items: center;
+            .input {
+                width: 100%;
+                border: 2px solid transparent;
+                border-radius: $border-radius;
+                font-size: $font-sm;
+                background-color: $background-color;
+                color: $text-color;
+                transition: all $transition;
+                padding: $spacing-1 0;
+                padding-left: $spacing-2;
+                
+                &:focus {
+                    outline: none;
+                    border-color: $accent-color;
+                }
+                
+                &::placeholder {
+                    color: $light-text;
+                    opacity: 0.7;
+                }
+
+                &.input--light {
+                    background-color: $background-color;
+                    color: $text-color;
+                }
+
+                &.input--dark {
+                    border-radius: $border-radius-xl;
+                    color: $text-color;
+                    border-color: $light-text;
+                    &:focus { border-color: $accent-color; }
+                }
+
+                &.input--small {
+                    width: 30%;
+                    font-size: $font-sm;
+                }
+
+                &.input--medium {
+                    width: 60%;
+                    font-size: $font-base;
+                }
+
+                &.input--large {
+                    width: 100%;
+                    font-size: $font-lg;
+                }
+
+                &.input--full { width: 100%; }
+
+                &.input--error {
+                    border-color: $error-color !important;
+                    &:focus {
+                        border-color: $error-color !important;
+                        box-shadow: 0 0 0 3px rgba($error-color, 0.1) !important;
+                    }
+                }
+
+                &.input--disabled {
+                    background-color: rgba($light-text, 0.1);
+                    color: rgba($text-color, 0.5);
+                    cursor: not-allowed;
+                    &:focus {
+                        border-color: transparent !important;
+                        box-shadow: none !important;
+                    }
+                }
+            }
+
+            .passwordToggle {
+                position: absolute;
+                right: $spacing-2;
+                background: none;
+                border: none;
+                color: $light-text;
+                cursor: pointer;
+                font-size: $font-base;
+                padding: $spacing-1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                &:hover,
+                &:focus {
+                    color: $accent-color;
+                    outline: none;
+                }
+            }
+
+        }
+        .inputFieldWrapperDark{
+            justify-content: space-between;
+            align-items: center;
+
+            .label{
+                width: 30%;
+                font-weight: 400;
+            }
+            .input{
+                border-width: 2px;
+                padding-right: 40px;
+            }
+            .passwordToggle {
+                right: $spacing-2;
+                top: 50%; // Center vertically
+                transform: translateY(-50%); // Perfect vertical centering
+                z-index: 2;
+                
+            }
+        }
+    }
+
+    .errorMessage {
+        display: block;
+        color: $error-color;
+        font-size: $font-sm;
+        margin-top: $spacing-1;
+        font-weight: 500;
+    }
+}

@@ -1,0 +1,106 @@
+@import '../../../../assets/styles/variables';
+@import '../../../../assets/styles/mixins';
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 900; /* high z-index to overlay all other content */
+  // Responsive padding for smaller devices
+  @include respond-to($breakpoint-sm) {
+    padding: 10px; /* add padding on small devices */
+  }
+  @include respond-to(tablet) {
+    padding: 20px;
+  }
+
+  .overlayContent {
+    background-color: $background-color;
+    padding: 12px;
+    border-radius: 8px;
+    width: 95%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    max-height: 90vh;
+    
+    @include respond-to($breakpoint-lg){
+        max-width: $container-sm;
+        padding: 24px;
+        max-height: 80vh;
+    }
+
+    h2{
+        margin-bottom: $spacing-3;
+        font-size: $font-lg;
+    }
+    h3, p{
+        margin-bottom: $spacing-3;
+    }
+    .orgDetails {
+        
+        .sectionsContainer{
+            @include respond-to($breakpoint-lg){
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            &Section{
+                padding: 20px;
+                padding-top: 0;
+                border: 1px solid $primary-color;
+                border-radius: $border-radius-lg;
+                margin: $spacing-2 $spacing-2;
+                // text-align: center;
+                
+                h3,
+                h4 {
+                    margin-bottom: 8px;
+                    margin-top: 16px;
+                    background-color: $primary-color;
+                    width: 100%;
+                    color: $background-color;
+                    border-radius: $border-radius-lg;
+                    font-size: $font-base;
+                    text-align: left;
+                    padding: 0 $spacing-4;
+                }
+                h6 {
+                    margin: 4px 0;
+                    padding: 0 5%;
+                    font-size: $font-sm;
+                    display: flex;
+                    text-align: left;
+                    flex-direction: column;
+                    div{
+                        display: flex;
+                        justify-content: space-between;
+                        span{
+                            font-weight: 600;
+                        }
+                        p{
+
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+    }
+    
+    .overlayButtons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+  }
+  
+}
+

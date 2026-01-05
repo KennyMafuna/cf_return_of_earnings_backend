@@ -1,0 +1,315 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+
+.viewMainContainer {
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    
+    @include respond-to($breakpoint-md) {
+        padding: $spacing-3;
+    }
+
+    .headerContainer {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: $spacing-4;
+        width: 100%;
+        border-radius: $border-radius;
+        @include box-shadow(4);
+        
+        @include respond-to($breakpoint-md) {
+            padding: $spacing-4;
+            flex-direction: row;
+            gap: $spacing-4;
+        }
+
+        &:hover {
+            @include box-shadow(4);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+
+        }
+        
+        .section {
+            width: 100%;
+            transition: all 0.3s ease;
+            
+            @include respond-to($breakpoint-md) {
+                width: 50%;
+            }
+            
+
+            .headerTitle {
+                color: $accent-color;
+                margin: 0 0 $spacing-3 0;
+                font-size: 1.25rem;
+                font-weight: bold;
+                text-align: center;
+                padding-bottom: $spacing-2;
+
+            }
+            
+            .headerSubSection {
+                .headerRow {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: $spacing-2;
+                    padding: $spacing-2;
+                    border-radius: $border-radius;
+                    transition: background-color 0.2s ease;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: rgba($primary-color, 0.05);
+                    }
+
+                    .rowTitle {
+                        color: $text-color;
+                        font-weight: 500;
+                        font-size: $font-sm;
+                    }
+
+                    .rowValue {
+                        color: $text-color;
+                        font-weight: 600;
+                        padding: $spacing-1 $spacing-3;
+                        border-radius: $border-radius-xl;
+                        font-size: $font-xs;
+                        text-transform: uppercase;
+                        font-style: italic;
+                        @include box-shadow(1);
+
+                        &.verified,
+                        &.approved {
+                            background: $success-color;
+                            color: $background-color;
+                        }
+
+                        &.pending,
+                        &.submitted {
+                            background: $accent-color;
+                            color: $background-color;
+                        }
+
+                        &.draft {
+                            background: $accent-color;
+                            color: $background-color;
+                        }
+
+                        &.rejected {
+                            background: $error-color;
+                            color: $background-color;
+                        }
+
+                        &:not(.verified):not(.approved):not(.pending):not(.submitted):not(.draft):not(.rejected) {
+                            background: $background-color;
+                            color: $primary-color;
+                            border: 1px solid $primary-color;
+                        }
+                    }
+
+                    .notes{
+                        max-width: 50%;
+                        color: $error-color;
+                        font-size: $font-xs;
+                        text-align: right;
+                        border: 1px solid $error-color;
+                        padding: $spacing-2;
+                        border-radius: $border-radius-xl;
+                    }
+                }
+            }
+        }
+    }
+
+    .content {
+        display: grid;
+        gap: $spacing-3;
+        width: 100%;
+        
+        @include respond-to($breakpoint-md) {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: $spacing-4;
+            
+            @include respond-to-mobile-landscape() {
+                grid-template-columns: repeat(2, 1fr);
+                gap: $spacing-3;
+            }
+        }
+
+        .section {
+            border-radius: $border-radius;
+            cursor: default;
+            transition: all 0.3s ease;
+            width: 100%;
+            padding: $spacing-4;
+            @include box-shadow(3);
+            text-align: left;
+            
+            &:hover {
+                @include box-shadow(4);
+                transform: translateY(-2px);
+            }
+
+            .sectionTitle {
+                color: $accent-color;
+                margin: 0 0 $spacing-3 0;
+                font-size: 1.1rem;
+                font-weight: bold;
+                text-align: center;
+                padding-bottom: $spacing-2;
+                border-bottom: 2px solid $primary-color;
+
+                @include respond-to($breakpoint-md) {
+                    font-size: 1.25rem;
+                }
+            }
+
+            .formGrid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: $spacing-3;
+
+                @include respond-to($breakpoint-md) {
+                    grid-template-columns: repeat(1, 1fr);
+                    gap: $spacing-3;
+                }
+            }
+
+            .industriesSection {
+                .industriesplaceholder {
+                    display: block;
+                    color: $accent-color;
+                    font-weight: 500;
+                    margin-bottom: $spacing-2;
+                    font-size: 0.875rem;
+                    text-align: center;
+                }
+
+                .industriesList {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: $spacing-2;
+
+                    .industryTag {
+                        background: $accent-color;
+                        color: $background-color;
+                        padding: 4px 12px;
+                        border-radius: 16px;
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        @include box-shadow(1);
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            transform: scale(1.05);
+                            @include box-shadow(2);
+                        }
+                    }
+                }
+            }
+        }
+
+        .documentsGrid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: $spacing-3;
+
+            @include respond-to($breakpoint-md) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .documentCard {
+            background: $background-color;
+            border: 1px solid rgba($primary-color, 0.2);
+            border-radius: $border-radius;
+            padding: $spacing-3;
+            transition: all $transition;
+
+            &:hover {
+                border-color: $primary-color;
+                @include box-shadow(2);
+                transform: translateY(-2px);
+            }
+        }
+
+        .documentInfo {
+            margin-bottom: $spacing-2;
+
+            .documentName {
+                color: $primary-color;
+                margin: 0 0 $spacing-1 0;
+                font-size: $font-sm;
+                font-weight: 600;
+            }
+
+            .documentDetails {
+                color: $light-text;
+                margin: 0 0 $spacing-1 0;
+                font-size: $font-xs;
+            }
+
+            .uploadDate {
+                color: $light-text;
+                margin: 0;
+                font-size: $font-xxs;
+                font-style: italic;
+            }
+        }
+
+        .documentActions {
+            display: flex;
+            gap: $spacing-2;
+            justify-content: space-between;
+        }
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-3;
+        align-items: stretch;
+        margin-top: $spacing-4;
+        padding-top: $spacing-4;
+        border-top: 2px solid $primary-color;
+
+        @include respond-to($breakpoint-md) {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: $spacing-4;
+
+        }
+    }
+}
+
+@include respond-to-mobile-landscape() {
+    .viewMainContainer {
+        .headerContainer {
+            .section {
+                padding: $spacing-3;
+                
+                .headerSubSection {
+                    .headerRow {
+                        flex-direction: row;
+                    }
+                }
+            }
+        }
+
+        .content {
+            .section {
+                .formGrid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        }
+    }
+}

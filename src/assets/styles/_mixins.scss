@@ -1,0 +1,284 @@
+// _mixins.scss
+
+// Flexbox mixin
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+}
+
+// Media query mixin
+@mixin respond-to($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+// Height media query for mobile landscape
+@mixin respond-to-mobile-landscape($height-breakpoint: 412px) {
+  @media (min-height: $height-breakpoint) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+// Orientation-specific mixins
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+// Box shadow mixin
+@mixin box-shadow($level: 1) {
+  @if $level == 1 {
+    box-shadow: $shadow-sm;
+  } @else if $level == 2 {
+    box-shadow: $shadow;
+  } @else if $level == 3 {
+    box-shadow: $shadow-md;
+  } @else if $level == 4 {
+    box-shadow: $shadow-lg;
+  } @else if $level == 5 {
+    box-shadow: $shadow-xl;
+  }
+}
+
+// =====================
+// ANIMATION MIXINS
+// =====================
+
+// Slide animations
+@mixin slide-down($duration: 0.3s, $delay: 0s) {
+  animation: slideDown $duration ease-out $delay both;
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@mixin slide-up($duration: 0.3s, $delay: 0s) {
+  animation: slideUp $duration ease-out $delay both;
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@mixin slide-left($duration: 0.3s, $delay: 0s) {
+  animation: slideLeft $duration ease-out $delay both;
+  
+  @keyframes slideLeft {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+@mixin slide-right($duration: 0.3s, $delay: 0s) {
+  animation: slideRight $duration ease-out $delay both;
+  
+  @keyframes slideRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+// Fade animations
+@mixin fade-in($duration: 0.3s, $delay: 0s) {
+  animation: fadeIn $duration ease-in $delay both;
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin fade-out($duration: 0.3s, $delay: 0s) {
+  animation: fadeOut $duration ease-in $delay both;
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+@mixin fade-in-up($duration: 0.5s, $delay: 0s) {
+  animation: fadeInUp $duration ease-out $delay both;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@mixin fade-in-down($duration: 0.5s, $delay: 0s) {
+  animation: fadeInDown $duration ease-out $delay both;
+  
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// Scale animations
+@mixin scale-in($duration: 0.3s, $delay: 0s) {
+  animation: scaleIn $duration ease-out $delay both;
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+@mixin scale-out($duration: 0.3s, $delay: 0s) {
+  animation: scaleOut $duration ease-in $delay both;
+  
+  @keyframes scaleOut {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+}
+
+// Bounce animations
+@mixin bounce-in($duration: 0.6s, $delay: 0s) {
+  animation: bounceIn $duration ease-out $delay both;
+  
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+// Pulse animation
+@mixin pulse($duration: 1.5s, $delay: 0s) {
+  animation: pulse $duration ease-in-out $delay infinite;
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+// Shake animation
+@mixin shake($duration: 0.5s, $delay: 0s) {
+  animation: shake $duration ease-in-out $delay both;
+  
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(5px);
+    }
+  }
+}
+
+// Spin animation
+@mixin spin($duration: 1s, $delay: 0s) {
+  animation: spin $duration linear $delay infinite;
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+// Stagger animations for children
+@mixin stagger-children($animation-name, $duration: 0.3s, $stagger-delay: 0.1s) {
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation: #{$animation-name} $duration ease-out (#{$i * $stagger-delay}) both;
+    }
+  }
+}

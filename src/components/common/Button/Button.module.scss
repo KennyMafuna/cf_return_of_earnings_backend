@@ -1,0 +1,109 @@
+@import '../../../assets/styles/variables';
+@import '../../../assets/styles/mixins';
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: $border-radius;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all $transition;
+    text-decoration: none;
+    margin: $spacing-1 0;
+    font-weight: bold;
+    
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+    }
+}
+
+// Button variants
+.button--primary {
+    background-color: $accent-color;
+    color: white;
+    
+    &:hover:not(.button--disabled) {
+        background-color: darken($accent-color, 10%);
+    }
+}
+
+.button--secondary {
+    background-color: $primary-color;
+    color: white;
+    
+    &:hover:not(.button--disabled) {
+        background-color: darken($primary-color, 10%);
+    }
+}
+
+.button--tertiary {
+    background-color: $light-text;
+    color: $background-color;
+    
+    &:hover:not(.button--disabled) {
+        background-color: darken($light-text, 10%);
+    }
+}
+
+.button--danger {
+    background-color: $error-color;
+    color: $background-color;
+    
+    &:hover:not(.button--disabled) {
+        background-color: darken($error-color, 10%);
+    }
+}
+
+// Button sizes - MOBILE FIRST
+.button--small {
+    padding: $spacing-1 ;
+    font-size: $font-xs;
+    width: 40%;
+    
+    // Tablet and up
+    @media (min-width: $breakpoint-md) {
+        
+    }
+}
+
+.button--medium {
+    padding: $spacing-1;
+    font-size: $font-sm;
+    width: 60%;
+    
+    // Tablet and up
+    @media (min-width: $breakpoint-md) {
+
+    }
+}
+
+.button--large {
+    padding: $spacing-1;
+    font-size: $font-base;
+    width: 80%;
+    
+    // Tablet and up
+    @media (min-width: $breakpoint-md) {
+
+    }
+}
+
+.button--full {
+    padding: $spacing-1;
+    font-size: $font-base;
+    width: 100%;
+    
+    // Tablet and up
+    @media (min-width: $breakpoint-md) {
+
+    }
+}
+
+// Button states
+.button--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

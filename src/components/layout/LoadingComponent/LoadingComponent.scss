@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import "../../../assets/styles/variables";
+@import "../../../assets/styles/mixins";
+
+
+.main-loading-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    background: $background-color;
+    z-index: 1001;
+    padding: 1rem;
+    font-family: 'Anton', sans-serif;
+    
+    .imagesConatiner{
+            margin-bottom: $spacing-6;
+            padding: $spacing-4;
+            border-radius: $border-radius-lg;
+            width: 90vw;
+            display: flex;
+            justify-content: center;
+            // box-shadow: rgb(161, 161, 161) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+            @include pulse;
+            @include respond-to($breakpoint-md){
+                width: auto;
+
+                @include respond-to-mobile-landscape{
+                    width: 50vw;
+                }
+            }
+            img{
+                width: 40%;
+                margin: 0 $spacing-2;
+            }
+    }
+
+    .text-loader {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        letter-spacing: 1px;
+        text-align: center;
+        max-width: 90vw;
+        
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        @include pulse;
+
+        @include respond-to-mobile-landscape{
+            font-size: clamp(1.0rem, 4vw, 2.0rem);
+        }
+        
+        .char {
+            color: $primary-color;
+            display: inline-block;
+            transform-origin: center center;
+            margin: 0 0.1em;
+            transition: transform 0.3s ease, color 0.3s ease;
+            
+            &.active {
+                color: $accent-color;
+                transform: rotate(360deg);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .text-loader {
+        .char {
+            margin: 0 0.05em;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .text-loader {
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 95vw;
+        
+        .char {
+            transform-origin: 50% 70%;
+        }
+    }
+}

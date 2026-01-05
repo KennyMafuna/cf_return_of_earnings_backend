@@ -1,0 +1,220 @@
+@import "../../assets/styles/variables";
+@import "../../assets/styles/mixins";
+
+.mainRegisterContainer{
+    @include flex-center(column);
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    flex-direction: column;
+    
+    @include respond-to($breakpoint-sm) {
+        padding-right: 0;
+        flex-direction: row;
+    }
+
+    .leftContainer{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+        height: 40vh;
+        max-height: 40vh;
+        padding: $spacing-3 $spacing-2;
+        width: 100%;
+        color: $background-color;
+        @include fade-in-up(0.8s);
+
+        @include landscape() {
+            width: 45vw !important;
+            padding-bottom:  $spacing-9;
+        }
+
+
+        @include respond-to($breakpoint-md) {
+            width: 40%;
+            height: 100vh;
+            max-height: 100vh;
+            padding: 0 $spacing-3;
+            padding-bottom:  $spacing-10 ;
+            @include respond-to-mobile-landscape() {
+                padding-bottom: $spacing-6;
+            }
+        }
+
+        .whiteLogo{
+            width: 20vw;
+            @include respond-to($breakpoint-sm) {
+                top: $spacing-7;
+                width: 10vw;
+                margin: $spacing-8 0;
+            }
+
+            @include landscape() {
+                margin-top: $spacing-2;
+                margin-bottom: $spacing-4;
+                width: 10vw;
+            }
+            
+        }
+
+        .navigationContainer{
+            margin: $spacing-4 0;
+            @include respond-to($breakpoint-lg) {
+                margin: $spacing-6 0 !important;
+            }
+            @include landscape() {
+                margin: $spacing-1 0;
+            }
+        
+        }
+
+        h1{
+            width: 100%;
+            font-size: $font-lg;
+            text-align: center;
+            @include respond-to-mobile-landscape() {
+                font-size: $font-base !important;
+                margin: $spacing-2 0;
+            }
+
+            @include respond-to($breakpoint-md) {
+                font-size: $font-2xl;
+            }
+        }
+
+        ul{
+            width: 90%;
+            margin: 0 $spacing-3;
+            font-weight: 400;
+            font-style: italic;
+            li{
+                margin: $spacing-2;
+                font-size: $font-xs;
+                @include respond-to-mobile-landscape() {
+                    font-size: $font-xxs !important;
+                    margin: $spacing-1 0 !important;
+                }
+                @include respond-to($breakpoint-lg) {
+                    margin: $spacing-4;
+                    font-size: $font-lg;
+                }
+            }
+        }
+    }
+
+    .rightContainer{
+        background: $background-color;
+        color: $text-color;
+        border-radius: $border-radius-lg  $border-radius-lg 0 0;
+        flex: 0 0 65vh;   
+        overflow-y: auto;
+        height: 60vh;
+        max-height: 60vh; 
+        width: 100%;
+        padding: $spacing-2 $spacing-2;
+        overflow-y: auto;
+        @include box-shadow(3);
+        @include fade-in-up(0.8s);
+        
+        @include respond-to($breakpoint-md) {
+            width: 60%;
+            margin-left: $spacing-3;
+            border-radius: $border-radius-xxl 0 0 $border-radius-xxl;
+            height: 95vh;
+            max-height: 95vh; 
+            flex: 0 1 65vw;
+            padding-top: $spacing-4;
+            padding-left: $spacing-7;
+            @include respond-to-mobile-landscape() {
+                padding-top: $spacing-1;
+                padding-left: $spacing-3;
+                border-radius: $border-radius-xl 0 0 $border-radius-xl ;
+            }
+        }
+
+        h1{
+            color: $primary-color;
+            text-align: center;
+            font-size: $font-xl;
+            font-weight: 900;
+
+            @include respond-to($breakpoint-md) {
+                text-align: center;
+                font-size: $font-2xl;
+                @include respond-to-mobile-landscape() {
+                    text-align: center;
+                    font-size: $font-xl;
+                }
+            }
+        }
+
+        h2{
+            text-align: center;
+            font-size: $font-lg;
+            font-weight: 400;
+            margin: $spacing-2 0;
+            
+            @include respond-to($breakpoint-md) {
+                text-align: center;
+                font-size: $font-xl;
+                margin: $spacing-4 0;
+                @include respond-to-mobile-landscape() {
+                    text-align: center;
+                    font-size: $font-lg;
+                }
+            }
+        }
+
+        .inputGroupOne{
+            margin: $spacing-3 0;
+
+            @include respond-to($breakpoint-md) {
+                margin: $spacing-2 $spacing-8;
+                @include respond-to-mobile-landscape() {
+                    margin: $spacing-2;
+                }
+            }
+        }
+
+        .confirmationButtonContainer{
+            border-bottom: 3px solid $accent-color;
+            padding-bottom: $spacing-4;
+            
+            @include respond-to($breakpoint-md) {
+                margin: $spacing-2 $spacing-8;
+                padding-bottom: $spacing-6;
+                @include flex-center(column);
+                form{
+                    width: 100%;
+                }
+                @include respond-to-mobile-landscape() {
+                    padding-bottom: $spacing-2;
+                    margin: $spacing-2;
+                }
+            }
+            p{
+                top: 50%;
+                width: 70%;
+                font-size: $font-xs;
+            }
+        }
+
+        .inputGroupTwo{
+            @include fade-in-up;
+            margin: $spacing-3 0;
+            margin-top: $spacing-5;
+
+            @include respond-to($breakpoint-md) {
+                margin: $spacing-2 $spacing-8;
+                margin-top: $spacing-7;
+                @include respond-to-mobile-landscape() {
+                    margin: $spacing-2;
+                    margin-top: $spacing-4;
+                }
+            }
+        }
+    }
+}

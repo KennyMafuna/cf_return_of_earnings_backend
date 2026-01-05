@@ -1,0 +1,3 @@
+- Modify localStorage loading useEffect to set verified to true and skip modal
+- Update documents display condition to use displayDocuments.length > 0
+- Disable Verify Details button when verified is true

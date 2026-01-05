@@ -1,0 +1,331 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+
+.firstContainer{
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    @include fade-in-down;
+    @include box-shadow(4);
+    border-radius: $border-radius-lg;
+    padding: 0 $spacing-3;
+    margin: $spacing-3 0;
+    border: solid $light-text 1px;
+    overflow-y: auto;
+    
+    @include respond-to($breakpoint-md) {
+        border: none;
+        margin: 0 $spacing-2;
+        width: 60%;
+        
+        @include respond-to-mobile-landscape() {
+            width: 80%;
+            flex-direction: row;
+        }
+    }
+    
+    .verifyContainer{
+        height: 70%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        @include fade-in-down;
+        
+        @include respond-to($breakpoint-md) {
+            height: 60%;
+            padding: $spacing-3;
+        }
+    }
+
+    .uploadContainer{
+        margin: $spacing-3;
+        @include fade-in-down;
+        height: 30%; 
+        padding: $spacing-3;
+        
+        @include respond-to($breakpoint-md) {
+            height: 40%;
+        }
+    }
+}
+
+.secondContainer{
+    @include box-shadow(3);
+    @include fade-in-down;
+    border-radius: $border-radius-lg;
+    max-height: 40vh;
+    height: 40vh;
+    padding: $spacing-3;
+    border: solid rgba($light-text, 0.3) 1px;
+    overflow-y: auto;
+    background: $background-color;
+    
+    @include respond-to($breakpoint-md) {
+        border: none;
+        margin: 0 $spacing-3;
+        width: 40%;
+        max-height: 60vh;
+        height: 60vh;
+        
+        @include respond-to-mobile-landscape() {
+            width: 80%;
+        }
+    }
+
+    h2 {
+        color: $text-color;
+        font-size: $font-lg;
+        font-weight: 600;
+        margin-bottom: $spacing-3;
+        text-align: center;
+        padding-bottom: $spacing-2;
+        border-bottom: 1px solid rgba($accent-color, 0.3);
+        
+        @include respond-to($breakpoint-md) {
+            font-size: $font-xl;
+        }
+    }
+
+    .documentGroup {
+        margin-bottom: $spacing-3;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .documentGroupTitle {
+            font-size: $font-base;
+            font-weight: 600;
+            color: $text-color;
+            margin-bottom: $spacing-2;
+            padding: $spacing-1 $spacing-2;
+            // background: rgba($accent-color, 0.05);
+            border-radius: $border-radius-sm;
+            // border-left: 3px solid $accent-color;
+            
+            @include respond-to($breakpoint-md) {
+                font-size: $font-lg;
+            }
+        }
+
+        .fileList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-1;
+
+            .fileItem {
+                display: flex;
+                align-items: center;
+                padding: $spacing-1 $spacing-2;
+                border-radius: $border-radius-sm;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background: $background-color;
+                    border-color: rgba($accent-color, 0.3);
+                    transform: translateX(2px);
+                }
+
+                .fileIcon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 1.75rem;
+                    height: 1.75rem;
+                    background: $accent-color;
+                    color: $background-color;
+                    border-radius: 50%;
+                    font-weight: 600;
+                    margin-right: $spacing-2;
+                    font-size: $font-xs;
+                    
+                    @include respond-to($breakpoint-md) {
+                        width: 2rem;
+                        height: 2rem;
+                        font-size: $font-sm;
+                    }
+                }
+
+                .fileInfo {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.125rem;
+
+                    .fileName {
+                        font-weight: 500;
+                        color: $text-color;
+                        font-size: $font-sm;
+                        word-break: break-word;
+                        
+                        @include respond-to($breakpoint-md) {
+                            font-size: $font-base;
+                        }
+                    }
+
+                    .fileDetails {
+                        font-size: $font-xxs;
+                        color: $light-text;
+                        display: flex;
+                        align-items: center;
+                        gap: $spacing-1;
+                        
+                        @include respond-to($breakpoint-md) {
+                            font-size: $font-xs;
+                        }
+                    }
+                }
+
+                .removeButton {
+                    background: none;
+                    border: none;
+                    color: $error-color;
+                    cursor: pointer;
+                    font-size: $font-lg;
+                    width: 1.75rem;
+                    height: 1.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: $border-radius-sm;
+                    transition: all 0.2s ease;
+                    opacity: 0.7;
+                    
+                    &:hover {
+                        background-color: rgba($error-color, 0.1);
+                        opacity: 1;
+                        transform: scale(1.05);
+                    }
+                    
+                    @include respond-to($breakpoint-md) {
+                        width: 2rem;
+                        height: 2rem;
+                    }
+                }
+            }
+        }
+    }
+
+    .uploadSummary {
+        margin-top: $spacing-3;
+        padding: $spacing-2;
+        background: rgba($accent-color, 0.08);
+        color: $text-color;
+        border-radius: $border-radius;
+        text-align: center;
+        font-weight: 500;
+        font-size: $font-sm;
+        border: 1px solid rgba($accent-color, 0.2);
+        
+        @include respond-to($breakpoint-md) {
+            font-size: $font-base;
+            padding: $spacing-3;
+        }
+    }
+
+    &:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &::before {
+            content: "No documents uploaded yet";
+            color: rgba($light-text, 0.7);
+            font-size: $font-base;
+            font-style: italic;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .fileItem {
+            flex-direction: row;
+            align-items: center;
+            gap: $spacing-2;
+            padding: $spacing-2;
+            
+            .fileIcon {
+                margin-right: $spacing-2;
+                align-self: center;
+            }
+            
+            .fileInfo {
+                width: auto;
+                text-align: left;
+            }
+            
+            .removeButton {
+                align-self: center;
+            }
+        }
+    }
+}
+
+.secondContainer .fileItem {
+    @include slide-up;
+}
+
+.SubmissionPopUp{
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* Blurs the content behind the element */
+    -webkit-backdrop-filter: blur(10px); /* For Safari support */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0 auto;
+    left: 0;
+    top: 0;
+
+    &Inner{
+        background-color: $background-color;
+        border: solid 1px $secondary-color;
+        border-radius: $border-radius-lg;
+        width: 100%;
+        padding: $spacing-4;
+        color: $text-color;
+
+        @include respond-to($breakpoint-lg){
+            width: 40%;
+
+        }
+
+        h3{
+            color: $accent-color;
+            margin: $spacing-2 0;
+        }
+
+        p{
+            strong{
+                font-weight: 600;
+                color: $primary-color;
+                font-variant: small-caps;
+            }
+        }
+    }
+
+
+    .buttonsContainer{
+        display: flex;
+        width: 90%;
+        margin: $spacing-4 auto;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: $spacing-1;
+        
+
+        @include respond-to($breakpoint-lg){
+            flex-direction: row;
+            width: 80%;
+            gap: $spacing-3;
+        }
+    }
+}

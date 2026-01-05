@@ -1,0 +1,184 @@
+@import '../../assets/styles/mixins';
+@import '../../assets/styles/variables';
+
+
+.dashboard{
+    height: 100vh;
+    overflow-y: hidden;
+    @include flex-center(column);
+    .content{
+        color: $background-color;
+        text-align: center;
+        height: 30%;
+        max-height: 30%;
+        overflow-y: auto;
+        @include respond-to($breakpoint-md) {
+            height: 30%;
+            width: $container-xl;
+            margin: 0 auto;
+            @include respond-to-mobile-landscape() {
+                width: 100%;
+            }
+        }
+        
+        header{
+            img{
+                display: none;
+            }
+            @include respond-to($breakpoint-md) {
+                margin: 0 auto;
+                width: 100%;
+                @include flex-center(row);
+                img{
+                    display: block;
+                    width: 7%;
+                }
+                @include respond-to-mobile-landscape() {
+                }
+            }
+            .navigationContainer{
+                margin-bottom: $spacing-3;
+                @include respond-to($breakpoint-md) {
+                    margin: 0 auto;
+                    margin-bottom: $spacing-3;
+                    @include respond-to-mobile-landscape() {
+                        width: auto;
+                        margin-bottom: 0;
+                    }
+                }
+                h1{
+                    color: $background-color;
+                    text-align: center;
+                    font-variant: small-caps;
+                    margin-bottom: $spacing-3;
+                    @include respond-to($breakpoint-md) {
+                        margin: $spacing-1;
+                        font-size: $font-3xl;
+                        @include respond-to-mobile-landscape() {
+                        }
+                    }
+                }
+            }
+        }
+        
+        .welcomeContainer{
+            @include respond-to($breakpoint-md) {
+                @include respond-to-mobile-landscape() {
+                    width: 100%;
+                }
+            }
+            .welcomeCard{
+                height: 40%;
+                @include respond-to($breakpoint-md) {
+                    margin: $spacing-2 0;
+                }
+                h2{
+                    font-size: $font-base;
+                    margin-bottom: $spacing-3;
+                    font-weight: 400;
+                }
+            }
+            .actions{
+                height: 10%;
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                margin-bottom: $spacing-3;
+                @include respond-to($breakpoint-md) {
+                    margin: 0 auto;
+                    width: 60%;
+                    @include respond-to-mobile-landscape() {
+                        width: 70%;
+                        margin-bottom: $spacing-2;
+                    }
+                }
+                .actionItem{
+                    cursor: pointer;
+                    font-weight: bold;
+                    letter-spacing: 1px;
+                    padding: $spacing-1 $spacing-2;
+                    background-color: $accent-color;
+                    font-size: $font-xs;
+                    border-radius: $border-radius-xl;
+                    &:hover{
+                        background-color: $accent-color-hover;
+                    }
+
+                    @include respond-to($breakpoint-md) {
+                        width: 33%;
+                        @include respond-to-mobile-landscape() {
+                            // width: 30%;
+                        }
+                    }
+                }
+                .active{
+                    background-color: $background-color;
+                    color: $accent-color;
+                    &:hover{
+                        background-color: $background-color;
+                    }
+                }
+            }
+        }
+    }
+
+    .tabContainer{
+        background-color: $background-color;
+        height: 70%;
+        max-height: 70%;
+        border-radius: $border-radius-lg $border-radius-lg 0 0;
+        overflow-y: auto;
+        width: 100%;
+        padding: $spacing-3 0;
+        color: black;
+        
+        a{
+            @include box-shadow (3);
+            @include slide-right();
+            top: 31%;
+            left: 2%;
+            position: absolute;
+            background-color: $accent-color;
+            padding: $spacing-1 $spacing-2;
+            border-radius: 50%;
+            color: $background-color;
+            font-size: $font-xs;
+            @include respond-to($breakpoint-md) {
+                display: none;
+                @include respond-to-mobile-landscape() {
+                    display: block;
+                }
+            }
+        }
+        .bringTop{
+            @include fade-in-down();
+            top: 1vh;
+        }
+
+        .tabContent{
+            margin: 0 $spacing-3;
+            text-align: center;
+            h2{
+                color: $primary-color;
+            }
+            p{
+                font-weight: 300;
+            }
+        }
+    }
+
+    .bringTopTabContainer{
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        .tabContent{
+            padding-top: $spacing-3;
+            border-top: solid $primary-color 2px;
+            border-radius: $border-radius-lg;
+        }
+    }
+
+    .hideContent{
+        display: none;
+    }
+}

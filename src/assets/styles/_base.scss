@@ -1,0 +1,42 @@
+@import 'variables';
+@import 'mixins'; 
+
+@import url('https://fonts.googleapis.com/css2?family=Advent+Pro:ital,wght@0,100..900;1,100..900&family=Mozilla+Headline:wdth,wght@89.9,200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    line-height: 1.6;
+    background-image: url('../images/background.png');
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: $primary-color;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%;
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: $accent-color;
+        border-radius: 5px;
+        border: 3px solid transparent;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background-color: transparent;
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: $accent-color;
+    }
+}

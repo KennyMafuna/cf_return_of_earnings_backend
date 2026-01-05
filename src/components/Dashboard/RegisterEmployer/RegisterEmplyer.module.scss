@@ -1,0 +1,58 @@
+@import "../../../assets/styles/variables";
+@import "../../../assets/styles/mixins";
+
+.registerContainer{
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    flex-direction: column;
+    
+    @include respond-to($breakpoint-md) {
+        @include flex-center(row);
+        
+        @include respond-to-mobile-landscape() {
+            @include flex-center(column);
+            padding-bottom: $spacing-3;
+        }
+    }
+
+    .tabContainer{
+        display: flex;
+        position: relative;
+        bottom: -$spacing-2;
+        left: 0;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: $spacing-2;
+        @include respond-to($breakpoint-md) {
+            position: fixed;
+            @include respond-to-mobile-landscape() {
+                position: relative;
+            }
+        }
+
+        p{
+            background-color: $background-color;
+            border: solid 3px $accent-color;
+            border-radius: 50%;
+            font-weight: bold;
+            padding: 0.07rem $spacing-2;
+            margin: $spacing-1;
+            @include box-shadow(4);
+            @include respond-to($breakpoint-md) {
+                padding: $spacing-2 $spacing-3;
+                margin: $spacing-3;
+
+                @include respond-to-mobile-landscape() {
+                    padding: 0.07rem $spacing-2;
+                    margin: $spacing-1;
+                }
+            }
+        }
+
+        .active{
+            background-color: $accent-color;
+            color: $background-color;
+            font-weight: 900;
+        }
+    }
+}

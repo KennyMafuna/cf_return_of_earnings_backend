@@ -1,0 +1,293 @@
+@import '../../../assets/styles/variables';
+@import '../../../assets/styles/mixins';
+
+
+.inputContainer {
+    margin-bottom: $spacing-3;
+    width: 100%;
+    
+    @media (min-width: $breakpoint-md) {
+        margin-bottom: $spacing-4;
+    }
+
+    .inputWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-1;
+
+        .label {
+            font-size: $font-xxxs;
+            color: $background-color;
+            font-weight: 300;
+            @include respond-to($breakpoint-md) {
+                width: 65%;
+                font-size: $font-base; 
+            }
+            @include respond-to-mobile-landscape() {
+                font-size: $font-xs;
+            }
+            
+            &.label--dark { 
+                color: $text-color !important;
+                font-weight: 400;
+            }
+            span{
+                color: $error-color;
+            }
+        }
+
+        .inputFieldWrapper, .inputFieldWrapperDark{
+            position: relative;
+            display: flex;
+            align-items: center;
+            .input {
+                width: 100%;
+                border: 2px solid transparent;
+                border-radius: $border-radius;
+                font-size: $font-sm;
+                background-color: $background-color;
+                color: $text-color;
+                transition: all $transition;
+                padding: $spacing-1 0;
+                padding-left: $spacing-2;
+                
+                &:focus {
+                    outline: none;
+                    border-color: $accent-color;
+                }
+                
+                &::placeholder {
+                    color: $light-text;
+                    opacity: 0.7;
+                }
+
+                &.input--light {
+                    background-color: $background-color;
+                    color: $text-color;
+                }
+
+                &.input--dark {
+                    border-radius: $border-radius-xl;
+                    color: $text-color;
+                    border-color: $light-text;
+                    &:focus { border-color: $accent-color; }
+                }
+
+                &.input--small {
+                    width: 30%;
+                    font-size: $font-sm;
+                }
+
+                &.input--medium {
+                    width: 60%;
+                    font-size: $font-base;
+                }
+
+                &.input--large {
+                    width: 100%;
+                    font-size: $font-lg;
+                }
+
+                &.input--full { width: 100%; }
+
+                &.input--error {
+                    border-color: $error-color !important;
+                    &:focus {
+                        border-color: $error-color !important;
+                        box-shadow: 0 0 0 3px rgba($error-color, 0.1) !important;
+                    }
+                }
+
+                &.input--disabled {
+                    background-color: rgba($light-text, 0.1);
+                    color: rgba($text-color, 0.5);
+                    cursor: not-allowed;
+                    &:focus {
+                        border-color: transparent !important;
+                        box-shadow: none !important;
+                    }
+                }
+            }
+        }
+    }
+}
+.datePickerWrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.datePickerInput {
+    padding-right: 40px !important;
+}
+
+.datePickerToggle {
+    position: absolute;
+    right: $spacing-2;
+    background: none;
+    border: none;
+    color: $light-text;
+    cursor: pointer;
+    font-size: $font-base;
+    padding: $spacing-1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color $transition;
+    
+    &:hover:not(:disabled) {
+        color: $accent-color;
+    }
+    
+    &:disabled {
+        color: rgba($light-text, 0.5);
+        cursor: not-allowed;
+    }
+}
+
+.datePickerDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 60%;
+    background: white;
+    border: 1px solid rgba($light-text, 0.2);
+    border-radius: $border-radius;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: $spacing-1;
+    padding: $spacing-2;
+    
+    .input--dark + & {
+        background: $background-color;
+        border-color: $light-text;
+    }
+}
+
+.datePickerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-2;
+    padding-bottom: $spacing-1;
+    border-bottom: 1px solid rgba($light-text, 0.1);
+}
+
+.datePickerNavButton {
+    background: none;
+    border: none;
+    color: $light-text;
+    cursor: pointer;
+    padding: $spacing-1;
+    border-radius: $border-radius-sm;
+    transition: all $transition;
+    
+    &:hover {
+        background: rgba($accent-color, 0.1);
+        color: $accent-color;
+    }
+}
+
+.datePickerMonthYear {
+    font-weight: 600;
+    color: $text-color;
+    font-size: $font-sm;
+}
+
+.datePickerNative {
+    width: 100%;
+    padding: $spacing-2;
+    border: 1px solid rgba($light-text, 0.3);
+    border-radius: $border-radius;
+    font-size: $font-sm;
+    margin-bottom: $spacing-2;
+    
+    &:focus {
+        outline: none;
+        border-color: $accent-color;
+    }
+}
+
+.datePickerActions {
+    display: flex;
+    gap: $spacing-2;
+    justify-content: space-between;
+}
+
+.datePickerTodayButton,
+.datePickerClearButton {
+    flex: 1;
+    padding: $spacing-1 $spacing-2;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-xs;
+    cursor: pointer;
+    transition: all $transition;
+}
+
+.datePickerTodayButton {
+    background: $accent-color;
+    color: white;
+    
+    &:hover {
+        background: darken($accent-color, 10%);
+    }
+}
+
+.datePickerClearButton {
+    background: rgba($light-text, 0.1);
+    color: $text-color;
+    
+    &:hover {
+        background: rgba($light-text, 0.2);
+    }
+}
+
+// Dark theme adjustments for date picker
+.input--dark {
+    + .datePickerWrapper .datePickerToggle {
+        color: $light-text;
+        
+        &:hover:not(:disabled) {
+            color: $accent-color;
+        }
+    }
+}
+
+.inputFieldWrapperDark {
+    .datePickerDropdown {
+        background: darken($background-color, 5%);
+        border-color: $light-text;
+        
+        .datePickerMonthYear {
+            color: $text-color;
+        }
+        
+        .datePickerNative {
+            background: $background-color;
+            color: $text-color;
+            border-color: $light-text;
+        }
+    }
+}
+
+// Size adjustments for date picker
+.input--small {
+    + .datePickerWrapper {
+        width: 30%;
+    }
+}
+
+.input--medium {
+    + .datePickerWrapper {
+        width: 60%;
+    }
+}
+
+.input--large,
+.input--full {
+    + .datePickerWrapper {
+        width: 100%;
+    }
+}

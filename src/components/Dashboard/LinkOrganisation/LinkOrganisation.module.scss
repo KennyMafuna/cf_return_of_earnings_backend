@@ -1,0 +1,187 @@
+@import "../../../assets/styles/variables";
+@import "../../../assets/styles/mixins";
+
+.mainLinkContainer {
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-4;
+    margin: 0 auto;
+    @include box-shadow(4);
+    height: 50vh;
+    max-width: 100%;
+    
+    @include respond-to($breakpoint-md) {
+        max-width: $container-lg;
+        padding: $spacing-10;
+        
+        @include respond-to-mobile-landscape() {
+            padding: 0 $spacing-4;
+        }
+    }
+
+    .inputWrapper {
+        width: 100%;
+        position: relative;
+
+        .cfInput {
+            width: 100%;
+            text-align: center;
+            letter-spacing: 1px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .formatHint {
+            color: $text-color;
+            font-size: 0.8rem;
+            margin-top: $spacing-1;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .errorMessage {
+            color: $error-color;
+            font-size: 0.8rem;
+            margin-top: $spacing-1;
+            text-align: center;
+            font-weight: bold;
+        }
+    }
+
+    .checkboxContainer {
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+        padding: $spacing-2;
+        background: $background-color;
+        border-radius: $border-radius;
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: $accent-color;
+            cursor: pointer;
+            
+            &:checked {
+                background-color: $accent-color;
+            }
+        }
+
+        p {
+            color: $text-color;
+            margin: 0;
+            font-size: 0.9rem;
+            
+            a.termsLink {
+                color: $accent-color;
+                font-weight: bold;
+                cursor: pointer;
+                text-decoration: underline;
+                
+                &:hover {
+                    color: darken($accent-color, 10%);
+                }
+            }
+        }
+    }
+
+    // Button styling
+    & > :global(.button) {
+        width: 100%;
+        margin-top: $spacing-2;
+        
+        &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            @include box-shadow(3);
+        }
+        
+        &:active {
+            transform: translateY(0);
+        }
+
+        &:disabled {
+            background-color: lighten($text-color, 40%);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    }
+
+    .termsLink {
+        color: $accent-color;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: underline;
+        
+        &:hover {
+            color: darken($accent-color, 10%);
+        }
+    }
+
+    .successMessage {
+        text-align: center;
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        
+        h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            color: #155724;
+            margin: 5px 0;
+        }
+    }
+
+    .uploadSection {
+        width: 100%;
+        text-align: center;
+        
+        .fileInfo {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: $text-color;
+        }
+    }
+}
+
+@include respond-to($breakpoint-sm) {
+    .mainLinkContainer {
+        padding: $spacing-3;
+        gap: $spacing-2;
+
+        .checkboxContainer {
+            padding: $spacing-1 $spacing-2;
+            
+            p {
+                font-size: 0.8rem;
+            }
+        }
+
+        .inputWrapper {
+            .cfInput {
+                font-size: 1rem;
+            }
+            
+            .formatHint {
+                font-size: 0.75rem;
+            }
+        }
+    }
+}
+
+@include respond-to-mobile-landscape() {
+    .mainLinkContainer {
+        padding: $spacing-3;
+    }
+}

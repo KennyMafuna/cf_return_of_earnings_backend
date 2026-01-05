@@ -1,0 +1,41 @@
+@import "../../assets/styles/variables";
+@import "../../assets/styles/mixins";
+
+.termsMainContainer {
+    background: $background-color;
+    border-radius: $border-radius;
+    padding: $spacing-3;
+    @include box-shadow(2);
+    margin: $spacing-3 auto;
+    height: 95vh;
+    width: 95%;
+    overflow-y: auto;
+    
+    @include respond-to($breakpoint-md){
+        max-width: $container-sm;
+        padding: $spacing-5 $spacing-6;
+
+    }
+
+    h1 {
+        color: $primary-color;
+        font-size: $font-2xl;
+        font-weight: 700;
+        text-align: center;
+        padding-bottom: $spacing-2;
+        border-bottom: 2px solid $accent-color;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+            font-size: $font-xs;
+            padding: $spacing-3;
+            background: lighten($primary-color, 75%);
+            border-radius: $border-radius;
+            line-height: 1.6;
+        }
+    }
+}

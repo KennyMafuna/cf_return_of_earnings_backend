@@ -1,0 +1,217 @@
+@import '../../../assets/styles/variables';
+@import '../../../assets/styles/mixins';
+
+.dropdownContainer {
+  margin-bottom: $spacing-3;
+  width: 100%;
+  
+  @media (min-width: $breakpoint-md) {
+    margin-bottom: $spacing-4;
+  }
+
+  .dropdownWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+
+    .label {
+      font-size: $font-xxs;
+      letter-spacing: 1px;
+      color: $background-color;
+      font-weight: 300;
+      
+      @include respond-to($breakpoint-md) {
+        font-size: $font-base; 
+      }
+      
+      @include respond-to-mobile-landscape() {
+        font-size: $font-xs;
+      }
+      
+      &.label--dark { 
+        color: $text-color !important;
+        font-weight: bold;
+      }
+    }
+
+    .dropdownFieldWrapper, .dropdownFieldWrapperDark {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .dropdown {
+        position: relative;
+        width: 100%;
+
+        &.dropdown--small {
+          width: 30%;
+        }
+
+        &.dropdown--medium {
+          width: 60%;
+        }
+
+        &.dropdown--large {
+          width: 100%;
+        }
+
+        &.dropdown--full {
+          width: 100%;
+        }
+
+        &.dropdown--error {
+          .dropdownTrigger {
+            border-color: $error-color !important;
+            
+            &:focus {
+              border-color: $error-color !important;
+              box-shadow: 0 0 0 3px rgba($error-color, 0.1) !important;
+            }
+          }
+        }
+
+        &.dropdown--disabled {
+          .dropdownTrigger {
+            background-color: rgba($light-text, 0.1);
+            color: rgba($text-color, 0.5);
+            cursor: not-allowed;
+            
+            &:focus {
+              border-color: transparent !important;
+              box-shadow: none !important;
+            }
+          }
+        }
+      }
+
+      .dropdownTrigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 2px solid transparent;
+        border-radius: $border-radius;
+        font-size: $font-sm;
+        background-color: $background-color;
+        color: $text-color;
+        transition: all $transition;
+        padding: $spacing-1 $spacing-2;
+        text-align: left;
+        cursor: pointer;
+
+        &:focus {
+          outline: none;
+          border-color: $accent-color;
+        }
+
+        &.dropdownTrigger--light {
+          background-color: $background-color;
+          color: $text-color;
+        }
+
+        &.dropdownTrigger--dark {
+          border-radius: $border-radius-xl;
+          color: $text-color;
+          border-color: $light-text;
+          
+          &:focus {
+            border-color: $accent-color;
+          }
+        }
+
+        &.dropdownTrigger--small {
+          font-size: $font-sm;
+        }
+
+        &.dropdownTrigger--medium {
+          font-size: $font-base;
+        }
+
+        &.dropdownTrigger--large {
+          font-size: $font-lg;
+        }
+
+        &.dropdownTrigger--error {
+          border-color: $error-color !important;
+        }
+
+        &.dropdownTrigger--disabled {
+          background-color: rgba($light-text, 0.1);
+          color: rgba($text-color, 0.5);
+          cursor: not-allowed;
+        }
+
+        .selectedValue {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .chevron {
+          margin-left: $spacing-1;
+          transition: transform $transition;
+          font-size: $font-xs;
+        }
+      }
+
+      .dropdownMenu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: $background-color;
+        border: 1px solid $light-text;
+        border-radius: $border-radius;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: $spacing-1;
+
+        .dropdownItem {
+          padding: $spacing-2;
+          cursor: pointer;
+          transition: background-color $transition;
+          border-bottom: 1px solid rgba($light-text, 0.1);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          &:hover {
+            background-color: rgba($accent-color, 0.1);
+          }
+
+          &.dropdownItem--selected {
+            background-color: rgba($accent-color, 0.2);
+            color: $accent-color;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .dropdownFieldWrapperDark {
+      justify-content: space-between;
+      align-items: center;
+
+      .label {
+        width: 30%;
+        font-weight: 400;
+      }
+
+      .dropdown {
+        width: 70%;
+      }
+    }
+  }
+
+  .errorMessage {
+    display: block;
+    color: $error-color;
+    font-size: $font-sm;
+    margin-top: $spacing-1;
+    font-weight: 500;
+  }
+}
