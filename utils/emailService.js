@@ -2,17 +2,16 @@ const nodemailer = require('nodemailer');
 
 const createTransporter = () => {
   return nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false, // TLS via STARTTLS
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,     // 9f5007001@smtp-brevo.com
-      pass: process.env.EMAIL_PASSWORD, // p5EXQ7JAPtbOjr9D
+      user: process.env.EMAIL_USER,       // your Gmail
+      pass: process.env.EMAIL_PASSWORD,   // Gmail App Password
     },
     connectionTimeout: 60_000,
     socketTimeout: 60_000,
   });
 };
+
 
 
 const sendRegistrationEmail = async (email, idNumber, password) => {
