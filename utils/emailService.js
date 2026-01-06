@@ -6,8 +6,8 @@ const createTransporter = () => {
     port: 587,
     secure: false, // TLS via STARTTLS
     auth: {
-      user: process.env.BREVO_SMTP_USER,     // 9f5007001@smtp-brevo.com
-      pass: process.env.BREVO_SMTP_PASSWORD, // p5EXQ7JAPtbOjr9D
+      user: process.env.EMAIL_USER,     // 9f5007001@smtp-brevo.com
+      pass: process.env.EMAIL_PASSWORD, // p5EXQ7JAPtbOjr9D
     },
     connectionTimeout: 60_000,
     socketTimeout: 60_000,
@@ -18,10 +18,10 @@ const createTransporter = () => {
 const sendRegistrationEmail = async (email, idNumber, password) => {
     try {
         console.log('📧 Attempting to send email to:', email);
-        console.log('🔐 Using email user:', process.env.BREVO_SMTP_USER);
+        console.log('🔐 Using email user:', process.env.EMAIL_USER);
         
         // Validate environment variables
-        if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASSWORD) {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
             throw new Error('Email credentials not configured in environment variables');
         }
 
@@ -34,7 +34,7 @@ const sendRegistrationEmail = async (email, idNumber, password) => {
         const mailOptions = {
             from: {
                 name: 'ROE Online', // Add sender name for better deliverability
-                address: process.env.BREVO_SMTP_USER
+                address: process.env.EMAIL_USER
             },
             to: email,
             subject: 'Your ROE Online Account Credentials',
@@ -99,10 +99,10 @@ const sendRegistrationEmail = async (email, idNumber, password) => {
 const sendPasswordResetEmail = async (email, idNumber, newPassword) => {
     try {
         console.log('📧 Attempting to send password reset email to:', email);
-        console.log('🔐 Using email user:', process.env.BREVO_SMTP_USER);
+        console.log('🔐 Using email user:', process.env.EMAIL_USER);
         
         // Validate environment variables
-        if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASSWORD) {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
             throw new Error('Email credentials not configured in environment variables');
         }
 
@@ -115,7 +115,7 @@ const sendPasswordResetEmail = async (email, idNumber, newPassword) => {
         const mailOptions = {
             from: {
                 name: 'ROE Online',
-                address: process.env.BREVO_SMTP_USER
+                address: process.env.EMAIL_USER
             },
             to: email,
             subject: 'ROE Online - Password Reset Confirmation',
@@ -191,7 +191,7 @@ const sendApprovalEmail = async (userEmail, organisationData) => {
         console.log('🏢 Organisation data:', organisationData);
         
         // Validate environment variables
-        if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASSWORD) {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
             throw new Error('Email credentials not configured in environment variables');
         }
 
@@ -204,7 +204,7 @@ const sendApprovalEmail = async (userEmail, organisationData) => {
         const mailOptions = {
             from: {
                 name: 'ROE Online',
-                address: process.env.BREVO_SMTP_USER
+                address: process.env.EMAIL_USER
             },
             to: userEmail,
             subject: '🎉 Your Organisation Has Been Approved!',
@@ -325,7 +325,7 @@ const sendLinkingEmail = async (organisation, user, docxBuffer) => {
         const mailOptions = {
             from: {
                 name: 'ROE Online',
-                address: process.env.BREVO_SMTP_USER
+                address: process.env.EMAIL_USER
             },
             to: [user.email, organisation.organisationDetails?.contact?.email, organisation.organisationDetails?.contact?.email].filter(Boolean),
             subject: `Organisation Linking Request - ${organisation.organisationDetails?.tradingName}`,
@@ -388,7 +388,7 @@ const sendLinkingConfirmationEmail = async (organisation, user) => {
         console.log('📧 Sending linking confirmation email...');
         
         // Validate environment variables
-        if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASSWORD) {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
             throw new Error('Email credentials not configured in environment variables');
         }
 
@@ -401,7 +401,7 @@ const sendLinkingConfirmationEmail = async (organisation, user) => {
         const mailOptions = {
             from: {
                 name: 'ROE Online',
-                address: process.env.BREVO_SMTP_USER
+                address: process.env.EMAIL_USER
             },
             to: [user.email, organisation.userId.email, organisation.organisationDetails.contact.email].filter(Boolean),
             subject: `Organisation Linking Confirmed - ${organisation.organisationDetails?.tradingName}`,
