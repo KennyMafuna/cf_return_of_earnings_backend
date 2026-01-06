@@ -2,17 +2,19 @@ const nodemailer = require('nodemailer');
 
 const createTransporter = () => {
   return nodemailer.createTransport({
-    service: 'gmail',
+    service: 'gmail', // Use service instead of host/port for better reliability
     auth: {
-      user: process.env.EMAIL_USER,       // your Gmail
-      pass: process.env.EMAIL_PASSWORD,   // Gmail App Password
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
     },
-    connectionTimeout: 60_000,
-    socketTimeout: 60_000,
+    // Additional settings for better reliability
+    pool: true,
+    maxConnections: 1,
+    maxMessages: 5,
+    rateDelta: 1000,
+    rateLimit: 5
   });
 };
-
-
 
 const sendRegistrationEmail = async (email, idNumber, password) => {
     try {
