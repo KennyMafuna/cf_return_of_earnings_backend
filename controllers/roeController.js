@@ -246,5 +246,6 @@ module.exports = {
   createROE,
   getROEsByOrganisation,
   getROE,
-  updateROE
+  updateROE,
+  submitROE
 };
