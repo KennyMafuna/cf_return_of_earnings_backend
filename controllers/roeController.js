@@ -195,6 +195,27 @@ const submitROE = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Organisation not found' });
     }
 
+    // Prevent duplicate ROE entries for same organisation and year
+    const existingROE = await ReturnOfEarnings.findOne({
+      cfRegistrationNumber: org.cfRegistrationNumber,
+      assessmentYear: Number(assessmentYear)
+    });
+    if (existingROE) {
+      return res.status(409).json({ success: false, message: 'ROE for this organisation and assessment year already exists. Use update endpoint to add documents or modify.' });
+    }
+
+    // Define required document types for a valid submission
+    // TODO: make this configurable if needed. Update this list to match expected documentType values.
+    const REQUIRED_DOCUMENT_TYPES = [ 'ROE_Document' ];
+
+    // Normalize provided documents and check required document types are present
+    const providedDocs = Array.isArray(documents) ? documents : [];
+    const providedTypes = providedDocs.map(d => (d.documentType || d.documentType === 0) ? String(d.documentType).toLowerCase() : '').filter(Boolean);
+    const missing = REQUIRED_DOCUMENT_TYPES.filter(reqType => !providedTypes.includes(reqType.toLowerCase()));
+    if (missing.length > 0) {
+      return res.status(400).json({ success: false, message: 'Missing required documents', missingDocuments: missing });
+    }
+
     // Build base ROE object
     const roeData = {
       cfRegistrationNumber: org.cfRegistrationNumber,
