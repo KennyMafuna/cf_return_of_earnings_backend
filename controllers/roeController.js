@@ -208,8 +208,15 @@ const submitROE = async (req, res) => {
     console.log('submitROE: existingROE found?', !!existingROE);
 
     // Define required document types for a valid submission
-    // TODO: make this configurable if needed. Update this list to match expected documentType values.
-    const REQUIRED_DOCUMENT_TYPES = [ 'ROE_Document' ];
+    // Updated to use the list provided by the client (value strings used in `documentType`)
+    const REQUIRED_DOCUMENT_TYPES = [
+      'Affidavit',
+      'DetailPayrollReport',
+      'NatureOfBusiness',
+      'SARSEMP501',
+      'SignedAnnualFinancialStatements'
+    ];
+    console.log('submitROE: REQUIRED_DOCUMENT_TYPES =', REQUIRED_DOCUMENT_TYPES);
 
     // Normalize provided documents
     const providedDocs = Array.isArray(documents) ? documents : [];
