@@ -173,6 +173,8 @@ const submitROE = async (req, res) => {
   try {
     const user = req.user; // set by auth middleware
     const payload = req.body || {};
+    console.log('submitROE called by user:', user && user._id ? user._id : 'unknown');
+    console.log('submitROE payload:', JSON.stringify(payload));
 
     const {
       cfRegistrationNumber,
@@ -185,6 +187,7 @@ const submitROE = async (req, res) => {
     } = payload;
 
     const cfReg = cfRegistrationNumber || CFregistrationNumber;
+    console.log('submitROE cfRegistrationNumber:', cfReg, 'assessmentYear:', assessmentYear);
     if (!cfReg || !assessmentYear) {
       return res.status(400).json({ success: false, message: 'cfRegistrationNumber and assessmentYear are required' });
     }
@@ -192,14 +195,17 @@ const submitROE = async (req, res) => {
     // find organisation
     const org = await Organisation.findOne({ cfRegistrationNumber: cfReg });
     if (!org) {
+      console.log('submitROE: organisation not found for cfRegistrationNumber:', cfReg);
       return res.status(404).json({ success: false, message: 'Organisation not found' });
     }
+    console.log('submitROE: found organisation:', org.cfRegistrationNumber);
 
     // Check for existing ROE for same organisation and year
     const existingROE = await ReturnOfEarnings.findOne({
       cfRegistrationNumber: org.cfRegistrationNumber,
       assessmentYear: Number(assessmentYear)
     });
+    console.log('submitROE: existingROE found?', !!existingROE);
 
     // Define required document types for a valid submission
     // TODO: make this configurable if needed. Update this list to match expected documentType values.
@@ -207,20 +213,25 @@ const submitROE = async (req, res) => {
 
     // Normalize provided documents
     const providedDocs = Array.isArray(documents) ? documents : [];
+    console.log('submitROE: providedDocs length:', providedDocs.length);
 
     // Helper to extract documentType string from a doc object
     const docTypeOf = (d) => (d && (d.documentType || d.document_type || d.type)) ? String(d.documentType || d.document_type || d.type) : '';
 
     // If an existing ROE exists, merge/update it instead of rejecting
     if (existingROE) {
+      console.log('submitROE: existingROE.documents count:', existingROE.documents ? existingROE.documents.length : 0);
       // Determine which document types are already present on the existing ROE
       const existingTypes = existingROE.documents.map(d => (d.documentType || '').toString().toLowerCase()).filter(Boolean);
 
       // Check that after merging providedDocs, all required types will be present
       const providedTypesLower = providedDocs.map(d => docTypeOf(d).toLowerCase()).filter(Boolean);
+      console.log('submitROE: existingTypes:', existingTypes, 'providedTypes:', providedTypesLower);
       const combinedTypes = Array.from(new Set([...existingTypes, ...providedTypesLower]));
+      console.log('submitROE: combinedTypes after merge:', combinedTypes);
       const missingAfterMerge = REQUIRED_DOCUMENT_TYPES.filter(reqType => !combinedTypes.includes(reqType.toLowerCase()));
       if (missingAfterMerge.length > 0) {
+        console.log('submitROE: missingAfterMerge:', missingAfterMerge);
         return res.status(400).json({ success: false, message: 'Missing required documents after merge', missingDocuments: missingAfterMerge });
       }
 
@@ -238,6 +249,7 @@ const submitROE = async (req, res) => {
             mimeType: d.mimeType || d.type || '',
             uploadDate: new Date()
           });
+          console.log('submitROE: appended document of type', dtype);
         }
       });
 
@@ -273,6 +285,7 @@ const submitROE = async (req, res) => {
       existingROE.status = 'submitted';
       existingROE.updatedAt = new Date();
       await existingROE.save();
+      console.log('submitROE: existing ROE updated successfully:', existingROE._id);
       return res.status(200).json({ success: true, message: 'ROE updated with submitted documents/assessments', data: existingROE });
     }
 
@@ -313,8 +326,10 @@ const submitROE = async (req, res) => {
     })) : [];
 
     // Create the ROE
+    console.log('submitROE: creating new ROE with data:', JSON.stringify(roeData));
     const roe = new ReturnOfEarnings(roeData);
     await roe.save();
+    console.log('submitROE: new ROE created:', roe._id);
 
     res.status(201).json({ success: true, message: 'ROE submitted', data: roe });
   } catch (error) {
