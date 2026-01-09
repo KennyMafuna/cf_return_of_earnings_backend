@@ -280,11 +280,13 @@ const submitROE = async (req, res) => {
         };
       }
 
-      // Apply top-level numeric updates if provided
+      // Apply top-level numeric updates if provided (include numberOfEmployees/numberOfDirectors)
       if (payload.employeesEarnings !== undefined) existingROE.employeesEarnings = Number(payload.employeesEarnings);
       if (payload.directorsEarnings !== undefined) existingROE.directorsEarnings = Number(payload.directorsEarnings);
       if (payload.accommodationMeals !== undefined) existingROE.accommodationMeals = Number(payload.accommodationMeals);
       if (payload.totalEarnings !== undefined) existingROE.totalEarnings = Number(payload.totalEarnings);
+      if (payload.numberOfEmployees !== undefined) existingROE.numberOfEmployees = Number(payload.numberOfEmployees);
+      if (payload.numberOfDirectors !== undefined) existingROE.numberOfDirectors = Number(payload.numberOfDirectors);
 
       // Recalculate totalEarnings from top-level fields for consistency
       existingROE.totalEarnings = Number(existingROE.employeesEarnings || 0) + Number(existingROE.directorsEarnings || 0) + Number(existingROE.accommodationMeals || 0);
