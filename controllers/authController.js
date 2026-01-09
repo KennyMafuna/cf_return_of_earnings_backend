@@ -295,9 +295,16 @@ const adminLogin = async (req, res) => {
         console.log('Admin login attempt with username:', username);
 
         console.log('Checking admin_users collection...');
+        console.log('Connected MongoDB DB name:', mongoose.connection.name);
         const adminUsersCollection = mongoose.connection.collection('admin_users');
-        const adminUser = await adminUsersCollection.findOne({ 
-            $or: [{ username }, { email: username }] 
+
+        // Normalize input and perform case-insensitive exact match for username or email
+        const normalized = typeof username === 'string' ? username.trim() : username;
+        const adminUser = await adminUsersCollection.findOne({
+            $or: [
+                { username: { $regex: `^${normalized}$`, $options: 'i' } },
+                { email: { $regex: `^${normalized}$`, $options: 'i' } }
+            ]
         });
         
         if (!adminUser) {
