@@ -285,75 +285,88 @@ const adminLogin = async (req, res) => {
         const bcrypt = require('bcryptjs');
         const mongoose = require('mongoose');
 
-        console.log('Login attempt with username:', username);
+        if (!username || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username and password are required'
+            });
+        }
 
-        console.log('Not found in users collection, checking admin_users...');
+        console.log('Admin login attempt with username:', username);
+
+        console.log('Checking admin_users collection...');
         const adminUsersCollection = mongoose.connection.collection('admin_users');
         const adminUser = await adminUsersCollection.findOne({ 
             $or: [{ username }, { email: username }] 
         });
         
-        if (adminUser) {
-            console.log('Found admin user:', adminUser.username);
-            const isPasswordValid = await bcrypt.compare(password, adminUser.password);
-            
-            console.log('Password valid for admin:', isPasswordValid);
-            if (!isPasswordValid) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid username or password'
-                });
-            }
-            
-            // Update last login for admin user
-            await adminUsersCollection.updateOne(
-                { _id: adminUser._id },
-                { $set: { lastLogin: new Date(), updatedAt: new Date() } }
-            );
-            
-            const token = generateToken(adminUser._id);
-            
-            // Convert permissions object to array format for frontend
-            let permissionsArray = [];
-            if (adminUser.permissions && typeof adminUser.permissions === 'object') {
-                // Flatten permissions object into array
-                Object.keys(adminUser.permissions).forEach(resource => {
-                    const actions = adminUser.permissions[resource];
-                    if (typeof actions === 'object') {
-                        Object.keys(actions).forEach(action => {
-                            if (actions[action] === true) {
-                                permissionsArray.push(`${resource}_${action}`);
-                            }
-                        });
-                    }
-                });
-            }
-            
-            // For super_admin, give all permissions
-            if (adminUser.role === 'super_admin' || adminUser.role === 'admin') {
-                permissionsArray = ['read', 'write', 'delete', 'manage_documents', 'manage_users', 'system_admin', 'process_roe_submissions', 'approve_audits', 'manage_organizations'];
-            }
-            
-            return res.status(200).json({
-                success: true,
-                message: 'Login successful',
-                data: {
-                    user: {
-                        id: adminUser._id,
-                        username: adminUser.username,
-                        email: adminUser.email,
-                        fullName: adminUser.fullName,
-                        role: adminUser.role,
-                        permissions: permissionsArray,
-                        lastLogin: new Date()
-                    },
-                    token
+        if (!adminUser) {
+            console.log('Admin user not found with username:', username);
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid username or password'
+            });
+        }
+
+        console.log('Found admin user:', adminUser.username);
+        const isPasswordValid = await bcrypt.compare(password, adminUser.password);
+        
+        console.log('Password valid for admin:', isPasswordValid);
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid username or password'
+            });
+        }
+        
+        // Update last login for admin user
+        await adminUsersCollection.updateOne(
+            { _id: adminUser._id },
+            { $set: { lastLogin: new Date(), updatedAt: new Date() } }
+        );
+        
+        const token = generateToken(adminUser._id);
+        
+        // Convert permissions object to array format for frontend
+        let permissionsArray = [];
+        if (adminUser.permissions && typeof adminUser.permissions === 'object') {
+            // Flatten permissions object into array
+            Object.keys(adminUser.permissions).forEach(resource => {
+                const actions = adminUser.permissions[resource];
+                if (typeof actions === 'object') {
+                    Object.keys(actions).forEach(action => {
+                        if (actions[action] === true) {
+                            permissionsArray.push(`${resource}_${action}`);
+                        }
+                    });
                 }
             });
         }
+        
+        // For super_admin, give all permissions
+        if (adminUser.role === 'super_admin' || adminUser.role === 'admin') {
+            permissionsArray = ['read', 'write', 'delete', 'manage_documents', 'manage_users', 'system_admin', 'process_roe_submissions', 'approve_audits', 'manage_organizations'];
+        }
+        
+        return res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            data: {
+                user: {
+                    id: adminUser._id,
+                    username: adminUser.username,
+                    email: adminUser.email,
+                    fullName: adminUser.fullName,
+                    role: adminUser.role,
+                    permissions: permissionsArray,
+                    lastLogin: new Date()
+                },
+                token
+            }
+        });
     
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Admin login error:', error);
         res.status(500).json({
             success: false,
             message: 'Error during login'
