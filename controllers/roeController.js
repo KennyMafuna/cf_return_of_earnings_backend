@@ -168,6 +168,80 @@ const updateROE = async (req, res) => {
   }
 };
 
+// Submit ROE - accepts full payload including finalAssessment, provisionalAssessment, documents array
+const submitROE = async (req, res) => {
+  try {
+    const user = req.user; // set by auth middleware
+    const payload = req.body || {};
+
+    const {
+      cfRegistrationNumber,
+      CFregistrationNumber,
+      assessmentYear,
+      documents = [],
+      finalAssessment = {},
+      provisionalAssessment = {},
+      comment,
+    } = payload;
+
+    const cfReg = cfRegistrationNumber || CFregistrationNumber;
+    if (!cfReg || !assessmentYear) {
+      return res.status(400).json({ success: false, message: 'cfRegistrationNumber and assessmentYear are required' });
+    }
+
+    // find organisation
+    const org = await Organisation.findOne({ cfRegistrationNumber: cfReg });
+    if (!org) {
+      return res.status(404).json({ success: false, message: 'Organisation not found' });
+    }
+
+    // Build base ROE object
+    const roeData = {
+      cfRegistrationNumber: org.cfRegistrationNumber,
+      processedBy: user._id,
+      assessmentYear: Number(assessmentYear),
+      status: 'submitted',
+      comments: comment || payload.comments || '',
+    };
+
+    // Map finalAssessment and provisionalAssessment into the document
+    const mapAssessment = (a) => ({
+      employeesEarnings: Number(a.employeesEarnings || 0),
+      directorsEarnings: Number(a.directorsEarnings || 0),
+      accommodationAndMeals: Number(a.accommodationAndMeals || a.accommodationMeals || 0),
+      totalEarnings: Number(a.totalEarnings || 0),
+      comment: a.comment || ''
+    });
+
+    roeData.finalAssessment = mapAssessment(finalAssessment);
+    roeData.provisionalAssessment = mapAssessment(provisionalAssessment);
+
+    // If top-level numeric fields are provided, keep them too for backwards compatibility
+    if (payload.employeesEarnings !== undefined) roeData.employeesEarnings = Number(payload.employeesEarnings);
+    if (payload.directorsEarnings !== undefined) roeData.directorsEarnings = Number(payload.directorsEarnings);
+    if (payload.accommodationMeals !== undefined) roeData.accommodationMeals = Number(payload.accommodationMeals);
+    if (payload.totalEarnings !== undefined) roeData.totalEarnings = Number(payload.totalEarnings);
+
+    // Attach provided documents metadata if any (expecting array of objects with filename/originalName/documentType...)
+    roeData.documents = Array.isArray(documents) ? documents.map(d => ({
+      filename: d.filename || d.fileName || d.originalName || '',
+      originalName: d.originalName || d.original || d.filename || '',
+      documentType: d.documentType || 'ROE_Document',
+      fileSize: d.fileSize || d.size || 0,
+      mimeType: d.mimeType || d.type || ''
+    })) : [];
+
+    // Create the ROE
+    const roe = new ReturnOfEarnings(roeData);
+    await roe.save();
+
+    res.status(201).json({ success: true, message: 'ROE submitted', data: roe });
+  } catch (error) {
+    console.error('Submit ROE error:', error);
+    res.status(500).json({ success: false, message: 'Error submitting ROE' });
+  }
+};
+
 module.exports = {
   createROE,
   getROEsByOrganisation,

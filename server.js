@@ -5,6 +5,12 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Fail fast if MongoDB URI is not set to avoid connecting to the default 'test' DB
+if (!process.env.MONGODB_URI) {
+  console.error('ERROR: MONGODB_URI is not set. Please set it in your .env or process manager environment. Exiting.');
+  process.exit(1);
+}
+
 const app = express();
 
 // Rate limiting

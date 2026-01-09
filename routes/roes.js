@@ -7,6 +7,9 @@ const { uploadSingle, uploadMultiple } = require('../middleware/upload');
 // Create ROE (optionally upload a single document)
 router.post('/documents', auth, uploadSingle, roeController.createROE);
 
+// Submit ROE payload (JSON) - create a submitted ROE record
+router.post('/submit', auth, roeController.submitROE);
+
 // Get all ROEs for an organisation (by CF registration number)
 router.get('/organisation/:cfRegistrationNumber', auth, roeController.getROEsByOrganisation);
 

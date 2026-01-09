@@ -35,6 +35,21 @@ const roeSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  // Store final and provisional assessment objects for audit and display
+  finalAssessment: {
+    employeesEarnings: { type: Number, default: 0 },
+    directorsEarnings: { type: Number, default: 0 },
+    accommodationAndMeals: { type: Number, default: 0 },
+    totalEarnings: { type: Number, default: 0 },
+    comment: { type: String }
+  },
+  provisionalAssessment: {
+    employeesEarnings: { type: Number, default: 0 },
+    directorsEarnings: { type: Number, default: 0 },
+    accommodationAndMeals: { type: Number, default: 0 },
+    totalEarnings: { type: Number, default: 0 },
+    comment: { type: String }
+  },
   totalEarnings: {
     type: Number,
     default: 0
