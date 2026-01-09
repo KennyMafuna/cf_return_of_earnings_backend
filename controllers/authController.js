@@ -312,6 +312,16 @@ const login = async (req, res) => {
 
         await user.updateLastLogin();
         const token = generateToken(user._id);
+        
+        const now = new Date();
+        const currentDateTime = now.toLocaleTimeString('en-GB') + ' ' + now.toLocaleDateString('en-GB');
+
+        var message = `Hi ${user.name} ${user.surname}, 
+                       we have detected a login on your return of earnings account at ${currentDateTime}.\n\n
+                       If this is not you, please get in touch with support on compeasysupport@labour.gov.za 
+                       right away.\n\nThank you for helping us keep your account safe.`;
+                       
+        await sendSms(message, `27${user.phoneNumber.slice(1,10)}`,"1");
 
         res.status(200).json({
             success: true,
