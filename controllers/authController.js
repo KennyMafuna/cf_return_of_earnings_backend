@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const AdminUser = require('../models/AdminUser');
 const crypto = require('crypto');
 const { sendRegistrationEmail, sendPasswordResetEmail } = require('../utils/emailService');
 const sendSms = require('../service/vodacomService');
@@ -294,18 +295,17 @@ const adminLogin = async (req, res) => {
 
         console.log('Admin login attempt with username:', username);
 
-        console.log('Checking admin_users collection...');
+        console.log('Checking admin_users collection via Mongoose model...');
         console.log('Connected MongoDB DB name:', mongoose.connection.name);
-        const adminUsersCollection = mongoose.connection.collection('admin_users');
 
         // Normalize input and perform case-insensitive exact match for username or email
         const normalized = typeof username === 'string' ? username.trim() : username;
-        const adminUser = await adminUsersCollection.findOne({
-            $or: [
-                { username: { $regex: `^${normalized}$`, $options: 'i' } },
-                { email: { $regex: `^${normalized}$`, $options: 'i' } }
-            ]
-        });
+        const ciRegex = new RegExp(`^${normalized}$`, 'i');
+
+        // Use the AdminUser Mongoose model so we rely on the same mongoose connection
+        const adminUser = await AdminUser.findOne({
+            $or: [ { username: ciRegex }, { email: ciRegex } ]
+        }).lean();
         
         if (!adminUser) {
             console.log('Admin user not found with username:', username);
@@ -326,11 +326,8 @@ const adminLogin = async (req, res) => {
             });
         }
         
-        // Update last login for admin user
-        await adminUsersCollection.updateOne(
-            { _id: adminUser._id },
-            { $set: { lastLogin: new Date(), updatedAt: new Date() } }
-        );
+        // Update last login for admin user using the Mongoose model
+        await AdminUser.updateOne({ _id: adminUser._id }, { $set: { lastLogin: new Date(), updatedAt: new Date() } });
         
         const token = generateToken(adminUser._id);
         
