@@ -8,6 +8,7 @@ const auth = require('../middleware/auth');
 router.post('/check-user', authController.checkUserInfo);
 router.post('/register', verifyRecaptcha, authController.register);
 router.post('/login', authController.login);
+router.post('/admin-login', authController.adminLogin);
 router.post('/reset-password', authController.resetPassword);
 router.post('/check-user-exists', authController.checkUserExists);
 router.post('/forgot-password', authController.forgotPassword);
