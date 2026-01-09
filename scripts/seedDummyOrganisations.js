@@ -41,6 +41,7 @@ const organisationSchema = new mongoose.Schema({
 });
 
 const Organisation = mongoose.model('Organisation', organisationSchema);
+const ReturnOfEarnings = require('../models/ReturnOfEarnings');
 
 const seedOrganisations = [
   {
@@ -246,6 +247,14 @@ async function seedDB() {
     // Clear existing organisations collection (optional)
     await Organisation.deleteMany({});
     console.log('Existing organisation data cleared.');
+
+    // Reset ReturnOfEarnings collection so tests/seeding start clean
+    try {
+      await ReturnOfEarnings.deleteMany({});
+      console.log('Existing ReturnOfEarnings data cleared.');
+    } catch (e) {
+      console.warn('Warning: could not clear ReturnOfEarnings collection (it may not exist yet).', e.message);
+    }
 
     // Insert seed organisations
     await Organisation.insertMany(seedOrganisations);

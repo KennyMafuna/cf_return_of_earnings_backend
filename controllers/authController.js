@@ -213,11 +213,82 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { username, password } = req.body;
+        const bcrypt = require('bcryptjs');
+        const mongoose = require('mongoose');
 
         console.log('Login attempt with username:', username);
 
-        // Search by idNumber since that's what you're using as username
-        const user = await User.findOne({ idNumber: username });
+        // Try to find user by idNumber first (regular users)
+        let user = await User.findOne({ idNumber: username });
+        
+        // If not found, try to find in admin_users collection by username or email
+        if (!user) {
+            console.log('Not found in users collection, checking admin_users...');
+            const adminUsersCollection = mongoose.connection.collection('admin_users');
+            const adminUser = await adminUsersCollection.findOne({ 
+                $or: [{ username }, { email: username }] 
+            });
+            
+            if (adminUser) {
+                console.log('Found admin user:', adminUser.username);
+                const isPasswordValid = await bcrypt.compare(password, adminUser.password);
+                
+                console.log('Password valid for admin:', isPasswordValid);
+                if (!isPasswordValid) {
+                    return res.status(401).json({
+                        success: false,
+                        message: 'Invalid username or password'
+                    });
+                }
+                
+                // Update last login for admin user
+                await adminUsersCollection.updateOne(
+                    { _id: adminUser._id },
+                    { $set: { lastLogin: new Date(), updatedAt: new Date() } }
+                );
+                
+                const token = generateToken(adminUser._id);
+                
+                // Convert permissions object to array format for frontend
+                let permissionsArray = [];
+                if (adminUser.permissions && typeof adminUser.permissions === 'object') {
+                    // Flatten permissions object into array
+                    Object.keys(adminUser.permissions).forEach(resource => {
+                        const actions = adminUser.permissions[resource];
+                        if (typeof actions === 'object') {
+                            Object.keys(actions).forEach(action => {
+                                if (actions[action] === true) {
+                                    permissionsArray.push(`${resource}_${action}`);
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                // For super_admin, give all permissions
+                if (adminUser.role === 'super_admin' || adminUser.role === 'admin') {
+                    permissionsArray = ['read', 'write', 'delete', 'manage_documents', 'manage_users', 'system_admin', 'process_roe_submissions', 'approve_audits', 'manage_organizations'];
+                }
+                
+                return res.status(200).json({
+                    success: true,
+                    message: 'Login successful',
+                    data: {
+                        user: {
+                            id: adminUser._id,
+                            username: adminUser.username,
+                            email: adminUser.email,
+                            fullName: adminUser.fullName,
+                            role: adminUser.role,
+                            permissions: permissionsArray,
+                            lastLogin: new Date()
+                        },
+                        token
+                    }
+                });
+            }
+        }
+        
         console.log('Found user:', user ? 'Yes' : 'No');
         
         if (!user) {
@@ -241,17 +312,6 @@ const login = async (req, res) => {
 
         await user.updateLastLogin();
         const token = generateToken(user._id);
-
-        const now = new Date();
-        const currentDateTime = now.toLocaleTimeString('en-GB') + ' ' + now.toLocaleDateString('en-GB');
-
-        var message = `Hi ${user.name} ${user.surname}, 
-                       we have detected a login on your return of earnings account at ${currentDateTime}.\n\n
-                       If this is not you, please get in touch with support on compeasysupport@labour.gov.za 
-                       right away.\n\nThank you for helping us keep your account safe.`;
-                       
-        // console.log(`27${user.phoneNumber.slice(1,10)}`)
-        await sendSms(message, `27${user.phoneNumber.slice(1,10)}`,"1");
 
         res.status(200).json({
             success: true,

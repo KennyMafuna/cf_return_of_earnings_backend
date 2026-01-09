@@ -2,7 +2,7 @@
 
 # admin_console.sh
 
-BASE_URL="http://localhost:5000/api"
+BASE_URL="https://roeonline.chickenkiller.com/api"
 
 # Colors for output
 RED='\033[0;31m'
