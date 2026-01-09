@@ -195,25 +195,85 @@ const submitROE = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Organisation not found' });
     }
 
-    // Prevent duplicate ROE entries for same organisation and year
+    // Check for existing ROE for same organisation and year
     const existingROE = await ReturnOfEarnings.findOne({
       cfRegistrationNumber: org.cfRegistrationNumber,
       assessmentYear: Number(assessmentYear)
     });
-    if (existingROE) {
-      return res.status(409).json({ success: false, message: 'ROE for this organisation and assessment year already exists. Use update endpoint to add documents or modify.' });
-    }
 
     // Define required document types for a valid submission
     // TODO: make this configurable if needed. Update this list to match expected documentType values.
     const REQUIRED_DOCUMENT_TYPES = [ 'ROE_Document' ];
 
-    // Normalize provided documents and check required document types are present
+    // Normalize provided documents
     const providedDocs = Array.isArray(documents) ? documents : [];
-    const providedTypes = providedDocs.map(d => (d.documentType || d.documentType === 0) ? String(d.documentType).toLowerCase() : '').filter(Boolean);
-    const missing = REQUIRED_DOCUMENT_TYPES.filter(reqType => !providedTypes.includes(reqType.toLowerCase()));
-    if (missing.length > 0) {
-      return res.status(400).json({ success: false, message: 'Missing required documents', missingDocuments: missing });
+
+    // Helper to extract documentType string from a doc object
+    const docTypeOf = (d) => (d && (d.documentType || d.document_type || d.type)) ? String(d.documentType || d.document_type || d.type) : '';
+
+    // If an existing ROE exists, merge/update it instead of rejecting
+    if (existingROE) {
+      // Determine which document types are already present on the existing ROE
+      const existingTypes = existingROE.documents.map(d => (d.documentType || '').toString().toLowerCase()).filter(Boolean);
+
+      // Check that after merging providedDocs, all required types will be present
+      const providedTypesLower = providedDocs.map(d => docTypeOf(d).toLowerCase()).filter(Boolean);
+      const combinedTypes = Array.from(new Set([...existingTypes, ...providedTypesLower]));
+      const missingAfterMerge = REQUIRED_DOCUMENT_TYPES.filter(reqType => !combinedTypes.includes(reqType.toLowerCase()));
+      if (missingAfterMerge.length > 0) {
+        return res.status(400).json({ success: false, message: 'Missing required documents after merge', missingDocuments: missingAfterMerge });
+      }
+
+      // Attach provided documents (avoid duplicates by documentType)
+      providedDocs.forEach(d => {
+        const dtype = docTypeOf(d);
+        if (!dtype) return; // skip malformed
+        const exists = existingROE.documents.some(ed => (ed.documentType || '').toString().toLowerCase() === dtype.toLowerCase());
+        if (!exists) {
+          existingROE.documents.push({
+            filename: d.filename || d.fileName || d.originalName || '',
+            originalName: d.originalName || d.original || d.filename || '',
+            documentType: d.documentType || d.documentType || 'ROE_Document',
+            fileSize: d.fileSize || d.size || 0,
+            mimeType: d.mimeType || d.type || '',
+            uploadDate: new Date()
+          });
+        }
+      });
+
+      // Update assessments if provided
+      if (finalAssessment && Object.keys(finalAssessment).length > 0) {
+        existingROE.finalAssessment = {
+          employeesEarnings: Number(finalAssessment.employeesEarnings || 0),
+          directorsEarnings: Number(finalAssessment.directorsEarnings || 0),
+          accommodationAndMeals: Number(finalAssessment.accommodationAndMeals || finalAssessment.accommodationMeals || 0),
+          totalEarnings: Number(finalAssessment.totalEarnings || 0),
+          comment: finalAssessment.comment || ''
+        };
+      }
+      if (provisionalAssessment && Object.keys(provisionalAssessment).length > 0) {
+        existingROE.provisionalAssessment = {
+          employeesEarnings: Number(provisionalAssessment.employeesEarnings || 0),
+          directorsEarnings: Number(provisionalAssessment.directorsEarnings || 0),
+          accommodationAndMeals: Number(provisionalAssessment.accommodationAndMeals || provisionalAssessment.accommodationMeals || 0),
+          totalEarnings: Number(provisionalAssessment.totalEarnings || 0),
+          comment: provisionalAssessment.comment || ''
+        };
+      }
+
+      // Apply top-level numeric updates if provided
+      if (payload.employeesEarnings !== undefined) existingROE.employeesEarnings = Number(payload.employeesEarnings);
+      if (payload.directorsEarnings !== undefined) existingROE.directorsEarnings = Number(payload.directorsEarnings);
+      if (payload.accommodationMeals !== undefined) existingROE.accommodationMeals = Number(payload.accommodationMeals);
+      if (payload.totalEarnings !== undefined) existingROE.totalEarnings = Number(payload.totalEarnings);
+
+      // Recalculate totalEarnings from top-level fields for consistency
+      existingROE.totalEarnings = Number(existingROE.employeesEarnings || 0) + Number(existingROE.directorsEarnings || 0) + Number(existingROE.accommodationMeals || 0);
+
+      existingROE.status = 'submitted';
+      existingROE.updatedAt = new Date();
+      await existingROE.save();
+      return res.status(200).json({ success: true, message: 'ROE updated with submitted documents/assessments', data: existingROE });
     }
 
     // Build base ROE object
