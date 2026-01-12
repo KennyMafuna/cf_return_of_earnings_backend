@@ -13,6 +13,8 @@ if (!process.env.MONGODB_URI) {
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
