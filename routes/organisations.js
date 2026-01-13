@@ -20,19 +20,20 @@ router.post('/submit-approval', auth , organisationController.submitForApproval)
 
 router.get('/documents',  auth, organisationController.getOrganisationProfile); 
 
-router.put('/:id/details', auth, organisationController.updateOrganisationDetails);
-
 router.get('/user-organisations',  auth, organisationController.getUserOrganisations);
 
 router.get('/admin/all', organisationController.getAllOrganisations);
+
+// Routes with hardcoded segments must come BEFORE generic :id params to avoid Express matching the wrong route
+router.post('/link', auth, organisationController.linkOrganisation);
+
+router.post('/upload-signed-form', auth, uploadSingle, organisationController.uploadSignedForm);
 
 router.patch('/admin/:id/approve', organisationController.approveOrganisation);
 
 router.patch('/admin/:id/reject', organisationController.rejectOrganisation);
 
-router.post('/link', auth, organisationController.linkOrganisation);
-
-router.post('/upload-signed-form', auth, uploadSingle, organisationController.uploadSignedForm);
+router.put('/:organisationId/resubmit', auth, organisationController.resubmitForApproval);
 
 router.put('/:organisationId/contact', auth, organisationController.updateContactInfo);
 
@@ -42,6 +43,6 @@ router.put('/:organisationId/banking', auth, organisationController.updateBankin
 
 router.put('/:organisationId/business', auth, organisationController.updateBusinessInfo);
 
-router.put('/:organisationId/resubmit', auth, organisationController.resubmitForApproval);
+router.put('/:id/details', auth, organisationController.updateOrganisationDetails);
 
 module.exports = router;
