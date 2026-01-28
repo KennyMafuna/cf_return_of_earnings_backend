@@ -54,14 +54,22 @@ const roeSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  paymentAmount: {
+    type: Number,
+    default: 0
+  },
   status: {
     type: String,
-    enum: ['draft', 'submitted', 'processed', 'approved', 'rejected'],
+    enum: ['draft', 'submitted', 'flagged', 'accepted', 'processed', 'approved', 'rejected'],
     default: 'submitted'
   },
   comments: {
     type: String
   },
+  flaggedAt: Date,
+  flaggedBy: String,
+  acceptedAt: Date,
+  acceptedBy: String,
   documents: [{
     filename: String,
     originalName: String,

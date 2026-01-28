@@ -13,6 +13,10 @@ router.post('/submit', auth, roeController.submitROE);
 // Get all ROEs for an organisation (by CF registration number)
 router.get('/organisation/:cfRegistrationNumber', auth, roeController.getROEsByOrganisation);
 
+// Admin routes - must come BEFORE generic /:id routes to avoid being matched as /:id
+router.patch('/admin/:id/flag-for-audit', roeController.flagROEForAudit);
+router.patch('/admin/:id/accept-submission', roeController.acceptROESubmission);
+
 // Get single ROE by id
 router.get('/:id', auth, roeController.getROE);
 

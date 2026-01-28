@@ -168,6 +168,120 @@ const updateROE = async (req, res) => {
   }
 };
 
+// Industry rates for payment calculation (percentage of total earnings)44
+
+// Higher risk industries have slightly higher rates, capped at 2% of total earnings
+const INDUSTRY_RATES = {
+  // High-risk industries
+  'Construction': 0.02,
+  'Mining': 0.02,
+  'Oil and Gas': 0.02,
+  'Agriculture': 0.015,
+  'Manufacturing': 0.015,
+  
+  // Medium-risk industries
+  'Retail': 0.01,
+  'Wholesale': 0.01,
+  'Healthcare': 0.01,
+  'Transportation': 0.01,
+  'Logistics': 0.01,
+  
+  // Low-risk industries
+  'Information Technology': 0.005,
+  'Finance': 0.005,
+  'Insurance': 0.005,
+  'Education': 0.005,
+  'Real Estate': 0.005,
+  'Professional Services': 0.005,
+  'Hospitality': 0.008,
+  
+  // Default rate
+  'default': 0.01
+};
+
+/**
+ * Calculate the payment amount due by the organisation
+ * @param {string|Array} industries - The industry/industries of the organisation
+ * @param {Object} roe - The ROE object containing earnings data (top-level and assessments)
+ * @param {number} numberOfEmployees - Number of employees
+ * @param {number} numberOfDirectors - Number of directors
+ * @returns {number} The calculated payment amount
+ */
+const calculatePaymentAmount = (
+  industries,
+  roe,
+  numberOfEmployees,
+  numberOfDirectors
+) => {
+  // Get earnings from finalAssessment if available, otherwise from top-level fields
+  // finalAssessment is the source of truth for submitted earnings
+  const finalAssessment = roe.finalAssessment || {};
+  const provisionalAssessment = roe.provisionalAssessment || {};
+  
+  // Use finalAssessment if it has data, otherwise fall back to provisional or top-level
+  let directorEarnings = 0;
+  let employeeEarnings = 0;
+  let accommodationMeals = 0;
+  
+  // Convert to numbers to handle both string and number types
+  const finalTotal = Number(finalAssessment.totalEarnings || finalAssessment.employeesEarnings || 0);
+  const provTotal = Number(provisionalAssessment.totalEarnings || provisionalAssessment.employeesEarnings || 0);
+  
+  if (finalTotal > 0) {
+    directorEarnings = Number(finalAssessment.directorsEarnings || 0);
+    employeeEarnings = Number(finalAssessment.employeesEarnings || 0);
+    accommodationMeals = Number(finalAssessment.accommodationAndMeals || 0);
+  } else if (provTotal > 0) {
+    directorEarnings = Number(provisionalAssessment.directorsEarnings || 0);
+    employeeEarnings = Number(provisionalAssessment.employeesEarnings || 0);
+    accommodationMeals = Number(provisionalAssessment.accommodationAndMeals || 0);
+  } else {
+    // Fall back to top-level fields
+    directorEarnings = Number(roe.directorsEarnings || 0);
+    employeeEarnings = Number(roe.employeesEarnings || 0);
+    accommodationMeals = Number(roe.accommodationMeals || 0);
+  }
+  
+  // Calculate total earnings
+  const totalEarnings = directorEarnings + employeeEarnings + accommodationMeals;
+  
+  if (totalEarnings <= 0) {
+    return 0;
+  }
+  
+  // Determine industry rate based on the organisation's industries
+  // Use the first industry if multiple are provided
+  let industryRate = INDUSTRY_RATES.default;
+  
+  if (industries) {
+    const industryList = Array.isArray(industries) ? industries : [industries];
+    
+    for (const industry of industryList) {
+      if (industry && INDUSTRY_RATES[industry]) {
+        industryRate = INDUSTRY_RATES[industry];
+        break;
+      }
+    }
+  }
+  
+  // Calculate base payment amount
+  let paymentAmount = totalEarnings * industryRate;
+  
+  // Apply adjustment factors based on scale (optional, keeps payment reasonable)
+  // Larger organisations get a small reduction
+  const totalPersonnel = Number(numberOfEmployees || 0) + Number(numberOfDirectors || 0);
+  if (totalPersonnel > 100) {
+    paymentAmount *= 0.95;
+  }
+  
+  // Cap at 10% of total earnings as per requirements
+  const maxPayment = totalEarnings * 0.10;
+  paymentAmount = Math.min(paymentAmount, maxPayment);
+  
+  // Round to 2 decimal places
+  return Math.round(paymentAmount * 100) / 100;
+};
+
 // Submit ROE - accepts full payload including finalAssessment, provisionalAssessment, documents array
 const submitROE = async (req, res) => {
   try {
@@ -206,6 +320,11 @@ const submitROE = async (req, res) => {
       assessmentYear: Number(assessmentYear)
     });
     console.log('submitROE: existingROE found?', !!existingROE);
+
+    // Prevent submission if already submitted
+    if (existingROE && existingROE.status === 'submitted') {
+      return res.status(400).json({ success: false, message: 'ROE has already been submitted for this organisation and assessment year' });
+    }
 
     // Define required document types for a valid submission
     // Updated to use the list provided by the client (value strings used in `documentType`)
@@ -293,9 +412,26 @@ const submitROE = async (req, res) => {
 
       existingROE.status = 'submitted';
       existingROE.updatedAt = new Date();
+      
+      // Calculate and store payment amount
+      const orgIndustries = org.organisationDetails?.businessInfo?.industries || [];
+      const paymentAmount = calculatePaymentAmount(
+        orgIndustries,
+        existingROE,
+        existingROE.numberOfEmployees,
+        existingROE.numberOfDirectors
+      );
+      existingROE.paymentAmount = paymentAmount;
+      
       await existingROE.save();
       console.log('submitROE: existing ROE updated successfully:', existingROE._id);
-      return res.status(200).json({ success: true, message: 'ROE updated with submitted documents/assessments', data: existingROE });
+      
+      return res.status(200).json({
+        success: true, 
+        message: 'ROE updated with submitted documents/assessments', 
+        data: existingROE,
+        paymentAmount
+      });
     }
 
     // Build base ROE object
@@ -334,16 +470,82 @@ const submitROE = async (req, res) => {
       mimeType: d.mimeType || d.type || ''
     })) : [];
 
+    // Calculate payment amount and store in ROE data
+    const orgIndustries = org.organisationDetails?.businessInfo?.industries || [];
+    const paymentAmount = calculatePaymentAmount(
+      orgIndustries,
+      roeData,
+      payload.numberOfEmployees,
+      payload.numberOfDirectors
+    );
+    roeData.paymentAmount = paymentAmount;
+
     // Create the ROE
     console.log('submitROE: creating new ROE with data:', JSON.stringify(roeData));
     const roe = new ReturnOfEarnings(roeData);
     await roe.save();
     console.log('submitROE: new ROE created:', roe._id);
 
-    res.status(201).json({ success: true, message: 'ROE submitted', data: roe });
+    res.status(201).json({ success: true, message: 'ROE submitted', data: roe, paymentAmount });
   } catch (error) {
     console.error('Submit ROE error:', error);
     res.status(500).json({ success: false, message: 'Error submitting ROE' });
+  }
+};
+
+// Flag ROE for audit (admin only)
+const flagROEForAudit = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const roe = await ReturnOfEarnings.findById(id);
+    if (!roe) {
+      return res.status(404).json({ success: false, message: 'ROE not found' });
+    }
+
+    // Update status to flagged
+    roe.status = 'flagged';
+    roe.flaggedAt = new Date();
+    roe.flaggedBy = 'admin-script';
+
+    await roe.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'ROE flagged for audit successfully',
+      data: roe
+    });
+  } catch (error) {
+    console.error('Flag ROE for audit error:', error);
+    res.status(500).json({ success: false, message: 'Error flagging ROE for audit' });
+  }
+};
+
+// Accept ROE submission (admin only)
+const acceptROESubmission = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const roe = await ReturnOfEarnings.findById(id);
+    if (!roe) {
+      return res.status(404).json({ success: false, message: 'ROE not found' });
+    }
+
+    // Update status to accepted
+    roe.status = 'accepted';
+    roe.acceptedAt = new Date();
+    roe.acceptedBy = 'admin-script';
+
+    await roe.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'ROE submission accepted successfully',
+      data: roe
+    });
+  } catch (error) {
+    console.error('Accept ROE submission error:', error);
+    res.status(500).json({ success: false, message: 'Error accepting ROE submission' });
   }
 };
 
@@ -352,5 +554,7 @@ module.exports = {
   getROEsByOrganisation,
   getROE,
   updateROE,
-  submitROE
+  submitROE,
+  flagROEForAudit,
+  acceptROESubmission
 };

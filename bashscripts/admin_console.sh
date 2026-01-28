@@ -2,7 +2,7 @@
 
 # admin_console.sh
 
-BASE_URL="https://roeonline.chickenkiller.com/api"
+BASE_URL="http://localhost:5000/api"
 
 # Colors for output
 RED='\033[0;31m'
@@ -11,7 +11,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🏢 Organisation Admin Console (No Auth Required)${NC}"
+echo -e "${BLUE}🏢 Organisation & ROE Admin Console (No Auth Required)${NC}"
 echo "=================================================="
 
 while true; do
@@ -20,8 +20,10 @@ while true; do
     echo "2) Get organisation details"
     echo "3) Approve organisation"
     echo "4) Reject organisation"
-    echo "5) Exit"
-    read -p "Enter choice (1-5): " choice
+    echo "5) Flag ROE for audit"
+    echo "6) Accept ROE submission"
+    echo "7) Exit"
+    read -p "Enter choice (1-7): " choice
 
     case $choice in
         1)
@@ -56,11 +58,23 @@ while true; do
               -d "{\"rejectionReason\": \"$reason\", \"notes\": \"$notes\"}" | python -m json.tool
             ;;
         5)
+            read -p "Enter ROE ID to flag for audit: " roe_id
+            echo -e "\n${YELLOW}🚩 Flagging ROE for audit...${NC}"
+            curl -s -X PATCH "$BASE_URL/roe/admin/$roe_id/flag-for-audit" \
+              -H "Content-Type: application/json" | python -m json.tool
+            ;;
+        6)
+            read -p "Enter ROE ID to accept submission: " roe_id
+            echo -e "\n${GREEN}✅ Accepting ROE submission...${NC}"
+            curl -s -X PATCH "$BASE_URL/roe/admin/$roe_id/accept-submission" \
+              -H "Content-Type: application/json" | python -m json.tool
+            ;;
+        7)
             echo -e "${GREEN}Goodbye! 👋${NC}"
             break
             ;;
         *)
-            echo -e "${RED}Invalid choice!${NC}"
+            echo -e "${RED}Invalid choice! Please enter 1-7.${NC}"
             ;;
     esac
 done
